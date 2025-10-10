@@ -3,3 +3,4 @@ dist
 out
 bun.lock
 setup_scraper_ubuntu.sh
+audios
