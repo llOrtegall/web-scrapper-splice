@@ -1,0 +1,25 @@
+{
+  "name": "api",
+  "module": "index.ts",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "API for Splice Scraper",
+  "scripts": {
+    "dev": "tsx watch ./src/index.ts",
+    "build": "tsc",
+    "start": "node --env-file=.env ./dist/indedx.js"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cors": "2.8.19",
+    "@types/express": "5.0.3",
+    "tsx": "^4.20.6"
+  },
+  "peerDependencies": {
+    "typescript": "5"
+  },
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "5.1.0"
+  }
+}
