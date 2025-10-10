@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Output
+out/
+dist/
+lib/
+
+# Development
+.git/
+.gitignore
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+README.md
+*.md
+
+# Testing
+coverage/
+.nyc_output/
