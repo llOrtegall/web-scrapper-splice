@@ -22,38 +22,44 @@ const argv = yargs(hideBin(process.argv)).argv as Arguments;
 const isTestMode = Boolean(argv.testMode);
 const config = getConfig(isTestMode);
 
+// Recording constants
+const AUDIO_CODEC = "pcm_s24le";
+const SAMPLE_RATE = "48000";
+const PROGRESS_SELECTOR = 'progress[class*="progress-bar"]';
+const NETWORK_IDLE_TIME = 1000;
+const RECORDING_STOP_DELAY = 500;
+
 console.log(`Running in ${config.mode} mode`);
 
 /**
  * Extracts sample ID from a Splice URL
  */
 function extractSampleId(sampleUrl: string): string {
-  return sampleUrl.replace("//", "/").split("/")[4];
+  const match = sampleUrl.match(/\/sounds\/([^\/]+)/);
+  return match ? match[1] : sampleUrl.replace("//", "/").split("/")[4];
 }
 
 /**
  * Extracts metadata from the sample page HTML
  */
 function extractMetadata(htmlContent: string, sampleUrl: string): SampleMetadata {
-  const parser = cheerio.load(htmlContent);
+  const $ = cheerio.load(htmlContent);
   const sampleId = extractSampleId(sampleUrl);
 
-  const title = parser(parser('[class^="title "]')[0]).text();
+  const title = $('[class^="title "]').first().text();
 
   let bpm: string | null = null;
   try {
-    bpm = parser(
-      parser("*").filter((i, el) => {
-        return parser(el).text().toLocaleLowerCase() === "bpm";
-      })[0].parent.lastChild
-    ).text();
+    const bpmElement = $("*").filter((i, el) => $(el).text().toLowerCase() === "bpm");
+    bpm = $(bpmElement[0].parent.lastChild).text();
     console.log(`BPM: ${bpm}`);
   } catch (e) {
     console.log("BPM not found (might be a one-shot sample)");
   }
 
-  const samplePack = parser(parser(".subheading").children("a")[0]).text();
-  const author = parser(parser(".subheading").children("a")[1]).text();
+  const subheadingLinks = $(".subheading").children("a");
+  const samplePack = $(subheadingLinks[0]).text();
+  const author = $(subheadingLinks[1]).text();
 
   return {
     title,
@@ -69,8 +75,8 @@ function extractMetadata(htmlContent: string, sampleUrl: string): SampleMetadata
  * Saves sample metadata to a JSON file
  */
 function saveMetadata(outputPath: string, metadata: SampleMetadata): void {
-  console.log("Writing metadata to JSON file...");
   fs.writeFileSync(`${outputPath}.json`, JSON.stringify(metadata, null, 2));
+  console.log("✓ Metadata saved");
 }
 
 /**
@@ -84,7 +90,7 @@ async function downloadSample(
   console.log(`\nDownloading sample: ${sampleUrl}`);
 
   await page.goto(sampleUrl);
-  await page.waitForNetworkIdle({ idleTime: 1000 });
+  await page.waitForNetworkIdle({ idleTime: NETWORK_IDLE_TIME });
 
   const htmlContent = await page.content();
   const metadata = extractMetadata(htmlContent, sampleUrl);
@@ -129,37 +135,49 @@ async function clickPlayButton(page: Page): Promise<void> {
     page,
     "span",
     (elem) => elem.innerHTML.includes("Play"),
-    (e) => e
+    (elem) => elem
   );
   await page.click(selector);
+}
+
+/**
+ * Gets current playback progress from the page
+ */
+async function getProgress(page: Page): Promise<number> {
+  return parseFloat(
+    await page.$eval(PROGRESS_SELECTOR, (e) => e.getAttribute("value"))
+  );
+}
+
+/**
+ * Waits for playback progress to meet a condition
+ */
+async function waitForProgressCondition(
+  page: Page,
+  bar: cliProgress.SingleBar,
+  condition: (progress: number) => boolean
+): Promise<void> {
+  let progress: number;
+  do {
+    progress = await getProgress(page);
+    bar.update(progress);
+  } while (condition(progress));
 }
 
 /**
  * Monitors the sample playback progress bar
  */
 async function monitorPlaybackProgress(page: Page): Promise<void> {
-  const progressSelector = 'progress[class*="progress-bar"]';
-  await page.waitForSelector(progressSelector);
+  await page.waitForSelector(PROGRESS_SELECTOR);
 
   const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
   bar.start(1, 0);
 
   // Wait for playback to start (progress > 0)
-  let progress = 0;
-  do {
-    progress = parseFloat(
-      await page.$eval(progressSelector, (e) => e.getAttribute("value"))
-    );
-    bar.update(progress);
-  } while (progress <= 0);
+  await waitForProgressCondition(page, bar, (p) => p <= 0);
 
   // Wait for playback to finish (progress returns to 0)
-  do {
-    progress = parseFloat(
-      await page.$eval(progressSelector, (e) => e.getAttribute("value"))
-    );
-    bar.update(progress);
-  } while (progress > 0);
+  await waitForProgressCondition(page, bar, (p) => p > 0);
 
   bar.stop();
   console.log("Finished sample playback");
@@ -176,23 +194,17 @@ async function recordSampleTake(
   const takeOutputPath = `${outputFilePathWithoutExt}_0.wav`;
   const recordingHandle = startRecording(takeOutputPath, recordingOptions);
 
-  await page.waitForNetworkIdle({ idleTime: 1000 });
+  await page.waitForNetworkIdle({ idleTime: NETWORK_IDLE_TIME });
   await clickPlayButton(page);
   await monitorPlaybackProgress(page);
 
   // Wait for audio to finish and silence to be detected
-  await waitForSilence({
-    deviceName: recordingOptions.deviceName,
-    audioInput: recordingOptions.audioInput,
-  });
+  await waitForSilence(recordingOptions);
 
   await stopRecording(recordingHandle);
 
   return takeOutputPath;
 }
-
-const AUDIO_CODEC = "pcm_s24le";
-const SAMPLE_RATE = "48000";
 
 /**
  * Starts recording audio using FFmpeg
@@ -218,23 +230,18 @@ function startRecording(
 
   const procHandle = spawn("ffmpeg", ffmpegArgs);
 
-  let stdout = "";
-  procHandle.stdout.on("data", (msg: Buffer) => {
-    stdout += msg.toString();
-  });
-
-  let stderr = "";
-  procHandle.stderr.on("data", (err: Buffer) => {
-    stderr += err.toString();
-  });
-
-  procHandle.on("close", () => {
-    if (stdout) {
-      console.log(stdout);
+  // Log FFmpeg output on close (stdout/stderr buffering avoided for large outputs)
+  procHandle.on("close", (code) => {
+    if (code !== 0 && code !== null) {
+      console.error(`FFmpeg exited with code ${code}`);
     }
-    if (stderr.trim().length > 0) {
-      console.error("FFmpeg output:", stderr);
-      console.log("(Note: FFmpeg may show warnings even on successful recording)");
+  });
+
+  // Only log FFmpeg errors
+  procHandle.stderr.on("data", (err: Buffer) => {
+    const errorMsg = err.toString();
+    if (errorMsg.includes("Error") || errorMsg.includes("error")) {
+      console.error("FFmpeg error:", errorMsg);
     }
   });
 
@@ -246,13 +253,8 @@ function startRecording(
  */
 async function stopRecording(recordingHandle: ChildProcess): Promise<void> {
   console.log("Stopping recording...");
-
-  // Send SIGINT to gracefully stop FFmpeg
   recordingHandle.kill("SIGINT");
-
-  // Give FFmpeg time to finalize the file
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
+  await new Promise((resolve) => setTimeout(resolve, RECORDING_STOP_DELAY));
   console.log("Stopped recording");
 }
 
@@ -260,10 +262,7 @@ async function stopRecording(recordingHandle: ChildProcess): Promise<void> {
  * Initializes the output directory
  */
 function initializeOutputDirectory(outputDir: string): void {
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-    console.log(`Created output directory: ${outputDir}`);
-  }
+  fs.mkdirSync(outputDir, { recursive: true });
 }
 
 /**
@@ -289,7 +288,7 @@ function initializeOutputDirectory(outputDir: string): void {
       withProxy: false,
       optimized: false,
       headless: config.browserHeadless,
-      args: [...config.browserArgs],
+      args: config.browserArgs,
       ignoreDefaultArgs: ["--mute-audio"],
       executablePath: config.executablePath,
     });
