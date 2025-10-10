@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "tsx watch ./src/index.ts",
     "build": "tsc",
-    "start": "node --env-file=.env ./dist/indedx.js"
+    "start": "node ./dist/index.js"
   },
   "devDependencies": {
     "@types/bun": "latest",
