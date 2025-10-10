@@ -1,1 +1,5 @@
 node_modules/
+dist
+out
+bun.lock
+setup_scraper_ubuntu.sh
