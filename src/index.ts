@@ -32,10 +32,24 @@ const RECORDING_STOP_DELAY = 500;
 console.log(`Running in ${config.mode} mode`);
 
 /**
+ * Sanitizes a filename by removing invalid characters
+ */
+function sanitizeFileName(fileName: string): string {
+  // Remove file extension if present
+  const nameWithoutExt = fileName.replace(/\.(wav|mp3|aiff|flac)$/i, '');
+  
+  // Replace invalid characters with underscores
+  return nameWithoutExt
+    .replace(/[<>:"\/\\|?*\x00-\x1f]/g, '_')
+    .replace(/\s+/g, '_')
+    .trim();
+}
+
+/**
  * Extracts sample ID from a Splice URL
  */
 function extractSampleId(sampleUrl: string): string {
-  const match = sampleUrl.match(/\/sounds\/([^\/]+)/);
+  const match = sampleUrl.match(/\/sounds\/sample\/([^\/\?]+)/);
   return match ? match[1] : sampleUrl.replace("//", "/").split("/")[4];
 }
 
@@ -46,7 +60,7 @@ function extractMetadata(htmlContent: string, sampleUrl: string): SampleMetadata
   const $ = cheerio.load(htmlContent);
   const sampleId = extractSampleId(sampleUrl);
 
-  const title = $('[class^="title "]').first().text();
+  const title = $('h1[class^="title"]').first().text();
 
   let bpm: string | null = null;
   try {
@@ -99,8 +113,10 @@ async function downloadSample(
     `Sample info - Title: ${metadata.title} | BPM: ${metadata.bpm} | Pack: ${metadata.album} | Author: ${metadata.artist}`
   );
 
+  // Use sanitized title as filename
+  const sanitizedTitle = sanitizeFileName(metadata.title);
   const outputFilePathWithoutExt = path.resolve(
-    path.join(config.outputDir, metadata.sampleId)
+    path.join(config.outputDir, sanitizedTitle)
   );
 
   const recordingOptions: RecordingOptions = {
