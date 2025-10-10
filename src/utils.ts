@@ -9,7 +9,7 @@ export interface LaunchBrowserOptions {
   optimized?: boolean;
   args?: string[];
   ignoreDefaultArgs?: string[];
-  headless?: boolean | 'new';
+  headless?: boolean;
   executablePath?: string;
 }
 
@@ -23,7 +23,7 @@ export async function launchBrowser({
   optimized = true,
   args = [],
   ignoreDefaultArgs = [],
-  headless = 'new',
+  headless = true,
   executablePath = undefined,
 }: LaunchBrowserOptions = {}): Promise<[Browser, Page]> {
   const browserArgs = [

@@ -3,7 +3,7 @@ export interface AppConfig {
   outputDir: string;
   executablePath?: string;
   ffmpegAudioInput: string;
-  browserHeadless: boolean | 'new';
+  browserHeadless: boolean;
   browserArgs: string[];
 }
 
@@ -27,7 +27,7 @@ export function getProductionConfig(): ProductionConfig {
     outputDir: './out',
     executablePath: '/usr/bin/google-chrome',
     ffmpegAudioInput: 'pulse',
-    browserHeadless: 'new',
+    browserHeadless: true,
     browserArgs: ['--use-fake-ui-for-media-stream'],
   };
 }
@@ -41,7 +41,7 @@ export function getTestConfig(): TestModeConfig {
     recordingDevice: 'virtual-capture-recorder.monitor', // Virtual PulseAudio monitor for servers
     outputDir: './out',
     ffmpegAudioInput: 'pulse',
-    browserHeadless: 'new',
+    browserHeadless: true,
     browserArgs: [
       '--use-fake-ui-for-media-stream',
       '--autoplay-policy=no-user-gesture-required',
