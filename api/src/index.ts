@@ -1,14 +1,16 @@
 import express, { type Request, type Response } from 'express';
 import { exec } from 'node:child_process';
 import cors from 'cors';
+import fs from 'fs';
+import path from 'path';
 
-async function waitForCommand(cmd: string, onComplete: (err: Error | null, stdout: string, stderr: string) => void): Promise<void> {
-  return new Promise((resolve) => {
-    exec(cmd, (err, stdout, stderr) => {
-      onComplete(err, stdout, stderr)
-      resolve()
-    })
-  })
+async function runCommand(cmd: string): Promise<{ stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    exec(cmd, { maxBuffer: 10 * 1024 * 1024 }, (err, stdout, stderr) => {
+      if (err) return reject(new Error(`${err.message}\n${stderr}`));
+      resolve({ stdout, stderr });
+    });
+  });
 }
 
 const PORT = process.env.PORT || 4000;
@@ -30,28 +32,34 @@ app.post('/download', async (req: Request, res: Response) => {
     return res.status(400).json({ error: 'URL is required' });
   }
 
-  // execute docker container to get audio using node child_process
+  const outDir = path.resolve(process.cwd(), 'audios');
+  await fs.promises.mkdir(outDir, { recursive: true });
+
   try {
+    // Ejecutar el contenedor Docker
     const dockerCmd = `sudo docker run --rm -v "$(pwd)/audios:/app/out" splice-scraper ${url}`;
+    const { stdout, stderr } = await runCommand(dockerCmd);
+    
+    console.log(stdout);
+    if (stderr) console.error(stderr);
 
-    await waitForCommand(dockerCmd, (err, stdout, stderr) => {
-      if (err) {
-        console.error(`Error executing command: ${err.message}`);
-        return res.status(500).json({ error: 'Failed to process the URL' });
-      }
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-      }
-      console.log(`stdout: ${stdout}`);
+    // Extraer el nombre del archivo del log
+    const filename = stdout.match(/Successfully downloaded:\s*(\S+\.(?:wav|mp3))/i)?.[1];
+    
+    if (!filename) {
+      return res.status(500).json({ error: 'Could not determine downloaded file from log' });
+    }
 
-      return res.status(200).json({ message: 'Audio downloaded successfully', output: stdout.trim() });
-    })
+    // Enviar el audio
+    res.download(path.join(outDir, filename), filename);
+
   } catch (error) {
-    console.error(`Unexpected error: ${error}`);
-    return res.status(500).json({ error: 'An unexpected error occurred' });
+    console.error('Error:', error);
+    return res.status(500).json({ 
+      error: error instanceof Error ? error.message : 'Download failed' 
+    });
   }
-
-})
+});
 
 app.listen(PORT, () => {
   console.log(`API server is running on port http://localhost:${PORT}`);
