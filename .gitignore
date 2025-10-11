@@ -4,6 +4,8 @@ out
 bun.lock
 setup_scraper_ubuntu.sh
 audios
+api_audios
+postgres_data
 
 # dependencies (bun install)
 node_modules

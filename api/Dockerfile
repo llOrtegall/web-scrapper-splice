@@ -29,9 +29,5 @@ RUN mkdir -p /app/audios
 # Exponer el puerto
 EXPOSE 4000
 
-# Variables de entorno por defecto (pueden ser sobreescritas)
-ENV PORT=4000
-ENV NODE_ENV=production
-
 # Comando de inicio
 CMD ["npm", "start"]
