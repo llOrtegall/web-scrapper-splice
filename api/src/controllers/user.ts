@@ -1,8 +1,8 @@
 import { ENV, JWT_SECRECT, ROUNDS_SALT } from '../schemas/env'
 import { Request, Response } from "express";
 import { User } from "../models/user.m";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 export const registerNewUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -21,6 +21,10 @@ export const registerNewUser = async (req: Request, res: Response) => {
       res.status(201).json({ message: 'User created successfully', user });
     })
     .catch((error) => {
+      if(error instanceof Error && error.name === 'SequelizeUniqueConstraintError') {
+        res.status(400).json({ error: 'Username already exists, try another one' });
+        return
+      }
       console.error('Error creating user:', error);
       res.status(500).json({ error: 'Failed to create user' });
     });
@@ -54,8 +58,25 @@ export const loginUser = async (req: Request, res: Response) => {
         role: user.role,
       }
 
-      const token = jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '1h' });
-      res.status(200).json({ message: 'User logged in successfully', userDTO, token });
+      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '2h' }, (err, token) => {
+        if (err) {
+          console.log(err.message);
+          res.status(401).json({ message: err.message })
+          return
+        };
+
+        res.status(200)
+          .cookie(
+            "token",
+            token,
+            {
+              httpOnly: ENV === 'dev' ? false : true,
+              secure: ENV === 'dev' ? false : true,
+              sameSite: ENV === 'dev' ? 'lax' : 'none'
+            }
+          )
+          .json({ message: 'Login successful', user: userDTO });
+      });
     })
     .catch((error) => {
       console.error('Error logging in user:', error);

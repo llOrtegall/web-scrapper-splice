@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { verifyToken } from '../services/verifyToken';
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
   const cookie = req.headers.cookie 
@@ -21,7 +21,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     await verifyToken(token)
     next();
   } catch (err) {
-    if (err instanceof TokenExpiredError) {
+    if (err instanceof jwt.TokenExpiredError) {
       res.status(401).json({ message: 'Token expired' });
       return 
     }
