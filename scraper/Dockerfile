@@ -1,10 +1,26 @@
-FROM node:20-slim
+FROM ubuntu:24.04
 
-# Install dependencies for Chrome, FFmpeg, and PulseAudio
+# Evitar prompts interactivos durante la instalación
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Instalar curl y ca-certificates primero
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar Node.js 22.x desde NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
+# Verificar instalación de Node.js
+RUN node --version && npm --version
+
+# Instalar dependencias para Chrome, FFmpeg y PulseAudio
 RUN apt-get update && apt-get install -y \
     wget \
-    gnupg \
-    ca-certificates \
     fonts-liberation \
     libasound2 \
     libatk-bridge2.0-0 \
@@ -27,39 +43,42 @@ RUN apt-get update && apt-get install -y \
     pulseaudio-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome Stable
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+# Instalar Google Chrome Stable
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg \
+    && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update \
     && apt-get install -y google-chrome-stable \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+# Establecer directorio de trabajo
 WORKDIR /app
 
-# Copy package files
+# Copiar archivos de package.json primero (para cache de Docker)
 COPY package*.json ./
 
-# Install Node dependencies
-RUN npm ci --only=production
+# Instalar todas las dependencias (incluyendo devDependencies para compilar)
+RUN npm install
 
-# Copy application source
+# Copiar el resto de los archivos
 COPY . .
 
-# Build TypeScript
+# Compilar TypeScript
 RUN npm run build
 
-# Create output directory
+# Eliminar devDependencies para reducir tamaño
+RUN npm prune --production
+
+# Crear directorio de salida
 RUN mkdir -p /app/out
 
-# Setup PulseAudio virtual device
+# Configurar dispositivo virtual de PulseAudio
 RUN mkdir -p /root/.config/pulse && \
     echo "load-module module-null-sink sink_name=virtual-capture-recorder" > /root/.config/pulse/default.pa && \
     echo "set-default-sink virtual-capture-recorder" >> /root/.config/pulse/default.pa && \
     echo "load-module module-native-protocol-unix" >> /root/.config/pulse/default.pa
 
-# Create entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+# Copiar y hacer ejecutable el script de entrypoint
+RUN cp ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh && \
+    chmod +x /usr/local/bin/docker-entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
