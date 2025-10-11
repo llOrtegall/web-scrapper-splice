@@ -1,7 +1,6 @@
 import { useAuth } from '../context/auth/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import AdminPanel from './AdminPanel';
 
 type DownloadStatus = 'idle' | 'processing' | 'completed' | 'failed';
 
@@ -11,12 +10,14 @@ interface Download {
   error?: string;
 }
 
-function Downloader() {
+function DownloaderSample() {
   const [url, setUrl] = useState('');
   const [downloadId, setDownloadId] = useState<string | null>(null);
   const [status, setStatus] = useState<Download | null>(null);
   const [loading, setLoading] = useState(false);
   const { user, logout } = useAuth();
+
+  console.log(user);
 
   // Polling para verificar el estado de la descarga
   useEffect(() => {
@@ -37,7 +38,7 @@ function Downloader() {
         clearInterval(interval);
         setLoading(false);
       }
-    }, 3000); // Verificar cada 3 segundos
+    }, 5000); // Verificar cada 5 segundos
 
     return () => clearInterval(interval);
   }, [downloadId]);
@@ -83,7 +84,6 @@ function Downloader() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative">
-
       <div className="w-full max-w-2xl bg-slate-800/90 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-2xl p-6 sm:p-8">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3">
@@ -113,8 +113,8 @@ function Downloader() {
           <button
             type="button"
             onClick={handleDownload}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50"
+            disabled={loading || status?.status === 'processing' || status?.status === 'completed'}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50 cursor-pointer"
           >
             {loading ? (
               <>
@@ -162,14 +162,14 @@ function Downloader() {
                       <button
                         type="button"
                         onClick={handleDownloadFile}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-green-500/50"
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-green-500/50 cursor-pointer"
                       >
                         📥 Descargar Archivo
                       </button>
                       <button
                         type="button"
                         onClick={handleReset}
-                        className="sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition"
+                        className="sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
                       >
                         🔄 Nueva descarga
                       </button>
@@ -190,7 +190,7 @@ function Downloader() {
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition"
+                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
                     >
                       🔄 Intentar de nuevo
                     </button>
@@ -211,20 +211,28 @@ function Downloader() {
         </div>
       </div>
 
-      <div className="absolute top-4 left-4">
-        {user && <AdminPanel />}
-      </div>
-
       <button
         type="button"
         onClick={logout}
-        className="absolute top-4 right-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition"
+        className="absolute top-4 right-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
       >
         Cerrar sesión
       </button>
 
+      {
+        user?.rol === 'admin' && (
+          <button
+            className="absolute top-4 left-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+          </button>
+        )
+      }
     </div>
   );
 }
 
-export default Downloader;
+export default DownloaderSample;
