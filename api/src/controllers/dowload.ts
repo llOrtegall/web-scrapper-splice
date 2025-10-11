@@ -26,7 +26,7 @@ export const dowloadSample = async (req: Request, res: Response) => {
     try {
       await fs.promises.mkdir(outDir, { recursive: true });
 
-      const dockerCmd = `sudo docker run --rm -v "${outDir}:/app/out" splice-scraper ${url}`;
+      const dockerCmd = `docker run --rm -v "${outDir}:/app/out" splice-scraper ${url}`;
       const { stdout, stderr } = await runCommand(dockerCmd);
 
       console.log(`[${downloadId}] ${stdout}`);
