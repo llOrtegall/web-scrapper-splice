@@ -8,24 +8,23 @@ services:
       POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-web_scrapper}
-    ports:
-      - "5432:5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - "9010:5432"
 
   # API Backend
-  backend:
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    image: web-scrapper-api:latest
-    container_name: web-scrapper-api
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./audios:/app/audios
-    depends_on:
-      - postgres
+  # backend:
+  #   build:
+  #     context: ./api
+  #     dockerfile: Dockerfile
+  #   image: web-scrapper-api:latest
+  #   container_name: web-scrapper-api
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   depends_on:
+  #     - postgres
 
   # Cliente Frontend
   client:
@@ -37,6 +36,3 @@ services:
     volumes:
       - ./client/dist:/usr/share/nginx/html
       - ./client/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - backend
-
