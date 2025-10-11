@@ -11,6 +11,6 @@ dowloadRouter.post('/download', authenticateToken, dowloadSample);
 dowloadRouter.get('/download/:id/status', getDownloadStatus);
 
 // Descargar el audio cuando esté listo
-dowloadRouter.get('/download/:id/file', downloadFile);
+dowloadRouter.get('/download/:id/file', authenticateToken, downloadFile);
 
 export { dowloadRouter } 

@@ -9,6 +9,7 @@ interface User {
   id: number;
   username: string;
   role: 'admin' | 'user';
+  is_active: boolean;
 }
 
 export default function AdminPanel({ className = '' }: AdminPanelProps) {
@@ -52,14 +53,14 @@ export default function AdminPanel({ className = '' }: AdminPanelProps) {
     setError(null);
   };
 
-  const handleToggleRole = async (username: string, currentRole: string) => {
-    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+  const handleToggleActive = async (username: string, currentActive: boolean) => {
+    const newActive = !currentActive;
     try {
-      await axios.post('/update', { username, role: newRole });
+      await axios.post('/update', { username, is_active: newActive });
       await fetchUsers();
     } catch (err) {
       console.error('Error updating user:', err);
-      setError('Error al actualizar usuario');
+      setError('Error al actualizar estado del usuario');
     }
   };
 
@@ -211,29 +212,41 @@ export default function AdminPanel({ className = '' }: AdminPanelProps) {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            user.role === 'admin' 
-                              ? 'bg-purple-500/20 text-purple-300' 
-                              : 'bg-blue-500/20 text-blue-300'
-                          }`}>
-                            {user.role === 'admin' ? 'Admin' : 'Usuario'}
-                          </span>
-                          <button
-                            onClick={() => handleToggleRole(user.username, user.role)}
-                            className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded-lg text-sm transition"
-                            title="Cambiar rol"
-                          >
-                            {user.role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
-                          </button>
-                          <button
-                            onClick={() => handleDeleteUser(user.username)}
-                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm transition"
-                            title="Eliminar usuario"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
+                          {user.role === 'admin' ? (
+                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/20 text-purple-300">
+                              Administrador
+                            </span>
+                          ) : (
+                            <>
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                user.is_active
+                                  ? 'bg-green-500/20 text-green-300' 
+                                  : 'bg-red-500/20 text-red-300'
+                              }`}>
+                                {user.is_active ? 'Activo' : 'Inactivo'}
+                              </span>
+                              <button
+                                onClick={() => handleToggleActive(user.username, user.is_active)}
+                                className={`${
+                                  user.is_active 
+                                    ? 'bg-orange-600 hover:bg-orange-700' 
+                                    : 'bg-green-600 hover:bg-green-700'
+                                } text-white px-3 py-1 rounded-lg text-sm transition`}
+                                title={user.is_active ? 'Desactivar usuario' : 'Activar usuario'}
+                              >
+                                {user.is_active ? 'Desactivar' : 'Activar'}
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(user.username)}
+                                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm transition"
+                                title="Eliminar usuario"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     ))}
@@ -252,8 +265,12 @@ export default function AdminPanel({ className = '' }: AdminPanelProps) {
                     <span className="font-semibold text-white">{users.length}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Administradores:</span>
-                    <span className="font-semibold text-purple-400">{users.filter(u => u.role === 'admin').length}</span>
+                    <span>Usuarios activos:</span>
+                    <span className="font-semibold text-green-400">{users.filter(u => u.is_active).length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Usuarios inactivos:</span>
+                    <span className="font-semibold text-red-400">{users.filter(u => !u.is_active).length}</span>
                   </div>
                 </div>
               </div>

@@ -71,6 +71,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
           id: user.id,
           username: user.username,
           role: user.role,
+          is_active: user.is_active,
         }
       })
       res.status(200).json({ message: 'Users found', users: usersDTO });
@@ -82,7 +83,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 }
 
 export const updateUserNameOrState = async (req: Request, res: Response) => {
-  const { username, role } = req.body;
+  const { username, is_active } = req.body;
   const userReq = req.user;
 
   if (!userReq) {
@@ -95,16 +96,16 @@ export const updateUserNameOrState = async (req: Request, res: Response) => {
     return;
   }
 
-  if (!username || !role) {
-    res.status(400).json({ error: 'Username and role are required' });
+  if (!username || is_active === undefined) {
+    res.status(400).json({ error: 'Username and is_active are required' });
     return
   }
 
   await User.sync();
 
-  await User.update({ role }, { where: { username } })
+  await User.update({ is_active }, { where: { username } })
     .then(() => {
-      res.status(200).json({ message: 'User updated successfully' });
+      res.status(200).json({ message: 'User status updated successfully' });
     })
     .catch((error) => {
       console.error('Error updating user:', error);
@@ -159,6 +160,13 @@ export const loginUser = async (req: Request, res: Response) => {
         res.status(401).json({ error: 'Invalid username or password' })
         return
       }
+
+      // Validar que el usuario esté activo
+      if (!user.is_active) {
+        res.status(403).json({ error: 'User account is inactive. Contact administrator.' })
+        return
+      }
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         res.status(401).json({ error: 'Invalid username or password' })
