@@ -17,7 +17,7 @@ function LoginForm() {
     })
       .then(response => {
         if (response.status === 200 && response.data) {
-          const { id, username, role } = response.data;
+          const { id, username, role } = response.data.user;
           login(id, username, role);
         }          
       })

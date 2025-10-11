@@ -1,5 +1,5 @@
-import axios from "axios";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import axios from "axios";
 
 interface User {
   id: string;
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     axios.get('/profile')
       .then(response => {
         if (response.status === 200 && response.data) {
-          const { id, username, role } = response.data;
+          const { id, username, role } = response.data.user;
           login(id, username, role);
         }
       })
