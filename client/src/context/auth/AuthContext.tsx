@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import axios from "axios";
+import { useAuthActions } from "../../hooks/useAuthActions";
 
 interface User {
   id: string;
@@ -11,8 +11,9 @@ interface User {
 interface AuthContext {
   isAuthenticated: boolean;
   user: User | null;
-  login: (id: string, username: string, rol: "admin" | "user") => void;
-  logout: () => void;
+  login: (credentials: { username: string; password: string }) => Promise<void>;
+  logout: () => Promise<void>;
+  loading: boolean;
 }
 
 export const AuthContext = createContext<AuthContext | undefined>(undefined);
@@ -20,55 +21,65 @@ export const AuthContext = createContext<AuthContext | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const { login: loginApi, logout: logoutApi, getProfile } = useAuthActions();
 
   useEffect(() => {
-    // validar si existe cookie con name token 
+    // validar si existe cookie con name token
     const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
 
     if (!cookie) {
-      logout();
+      setLoading(false);
       return;
+    }
+
+    const checkAuth = async () => {
+      try {
+        const response = await getProfile();
+        if (response?.user) {
+          const { id, username, role } = response.user;
+          setUser({ id, username, email: null, rol: role });
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        // Error silencioso, el usuario no está autenticado
+      } finally {
+        setLoading(false);
+      }
     };
 
-    axios.get('/profile')
-      .then(response => {
-        if (response.status === 200 && response.data) {
-          const { id, username, role } = response.data.user;
-          login(id, username, role);
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      })
-  }, [])
+    checkAuth();
+  }, [getProfile]);
 
-  const login = (id: string, username: string, rol: "admin" | "user") => {
-    setIsAuthenticated(true);
-    setUser({ id, username, email: null, rol });
+  const login = async (credentials: { username: string; password: string }) => {
+    try {
+      const response = await loginApi(credentials);
+      if (response?.user) {
+        const { id, username, role } = response.user;
+        setUser({ id, username, email: null, rol: role });
+        setIsAuthenticated(true);
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+      setUser(null);
+      throw error;
+    }
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await logoutApi();
+    } finally {
+      setIsAuthenticated(false);
+      setUser(null);
 
-    const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
-    if (!cookie) return;
-    
-    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
-
-    axios.post('/logout')
-      .then(response => {
-        if (response.status === 200) {
-          console.log('User logged out successfully');
-        }
-      })
-      .catch(error => {
-        console.error(error);
-      })
+      // Limpiar cookie
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+    }
   };
 
   return (
-    <AuthContext value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext value={{ isAuthenticated, user, login, logout, loading }}>
       {children}
     </AuthContext>
   );

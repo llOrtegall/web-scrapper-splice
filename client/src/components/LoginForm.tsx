@@ -1,32 +1,28 @@
 import { useAuth } from '../context/auth/AuthContext';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import axios from 'axios';
 
 function LoginForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
 
-    axios.post('/login', {
-      username,
-      password
-    })
-      .then(response => {
-        if (response.status === 200 && response.data) {
-          const { id, username, role } = response.data.user;
-          login(id, username, role);
-        }          
-      })
-      .catch(error => {
-        console.error(error);
-        if(error.response.status === 401) {
-          toast.error(error.response.data.error);
-        }
-      })
+    try {
+      await login({ username, password });
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error('Error al iniciar sesión');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -61,7 +57,9 @@ function LoginForm() {
                   placeholder="••••••••" className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
               </div>
 
-              <button type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50 cursor-pointer">Iniciar sesión</button>
+              <button type="submit" disabled={loading} className="w-full text-white bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50 cursor-pointer">
+                {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              </button>
             </form>
           </div>
         </div>

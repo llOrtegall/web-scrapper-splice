@@ -12,7 +12,7 @@ export const BrowserRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: 
+        element:
         <Suspense fallback={<Loading />}>
           <MainPage />
         </Suspense>
