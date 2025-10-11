@@ -1,5 +1,5 @@
 import { useAuth } from '../context/auth/AuthContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 type DownloadStatus = 'idle' | 'processing' | 'completed' | 'failed';
@@ -19,11 +19,13 @@ function DownloaderSample() {
 
   console.log(user);
 
-  // Polling para verificar el estado de la descarga
+  // Polling optimizado para verificar el estado de la descarga
   useEffect(() => {
     if (!downloadId) return;
 
-    const interval = setInterval(async () => {
+    let interval: ReturnType<typeof setInterval>;
+
+    const checkStatus = async () => {
       try {
         const { data } = await axios.get<Download>(`/download/${downloadId}/status`);
         setStatus(data);
@@ -35,15 +37,24 @@ function DownloaderSample() {
         }
       } catch (error) {
         console.error('Error checking status:', error);
+        setStatus({ status: 'failed', error: 'Error verificando estado' });
         clearInterval(interval);
         setLoading(false);
       }
-    }, 5000); // Verificar cada 5 segundos
+    };
 
-    return () => clearInterval(interval);
+    // Primera verificación inmediata
+    checkStatus();
+    
+    // Polling cada 2 segundos para mejor UX
+    interval = setInterval(checkStatus, 2000);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [downloadId]);
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     if (!url.trim()) {
       alert('Por favor ingresa una URL de Splice');
       return;
@@ -51,36 +62,56 @@ function DownloaderSample() {
 
     setLoading(true);
     setStatus(null);
+    setDownloadId(null);
 
     try {
       const { data } = await axios.post<{ downloadId: string; message: string }>(`/download`, { url });
-
       setDownloadId(data.downloadId);
       setStatus({ status: 'processing' });
     } catch (error) {
       console.error('Error starting download:', error);
-      alert('Error al iniciar la descarga');
+      const errorMsg = axios.isAxiosError(error) 
+        ? error.response?.data?.error || error.message
+        : 'Error al iniciar la descarga';
+      alert(errorMsg);
       setLoading(false);
     }
-  };
+  }, [url]);
 
-  const handleDownloadFile = () => {
+  const handleDownloadFile = useCallback(async () => {
     if (!downloadId) return;
-    // Descargar sin abrir ventana nueva
-    const link = document.createElement('a');
-    link.href = `/download/${downloadId}/file`;
-    link.download = status?.filename || 'audio.wav';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+    
+    try {
+      // Descargar como blob para evitar abrir nueva ventana
+      const response = await axios.get(`/download/${downloadId}/file`, {
+        responseType: 'blob'
+      });
+      
+      // Crear URL temporal del blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = status?.filename || 'audio.mp3';
+      
+      // Agregar, click y remover
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Liberar el URL temporal
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      alert('Error al descargar el archivo');
+    }
+  }, [downloadId, status?.filename]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     setUrl('');
     setDownloadId(null);
     setStatus(null);
     setLoading(false);
-  };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative">

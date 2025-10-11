@@ -70,30 +70,40 @@ export const getDownloadStatus = async (req: Request, res: Response) => {
 }
 
 export const downloadFile = async (req: Request, res: Response) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   if (!id) {
     res.status(400).json({ error: 'Download ID is required' });
     return;
   }
 
-  const download = downloads.get(id);
+  try {
+    const folderPath = path.join(baseDirAudios, id);
 
-  if (!download) {
-    res.status(404).json({ error: 'Download not found' });
-    return;
+    // Verificar si la carpeta existe
+    if (!fs.existsSync(folderPath)) {
+      res.status(404).json({ error: 'Download folder not found' });
+      return;
+    }
+
+    // Leer los archivos de la carpeta
+    const files = await fs.promises.readdir(folderPath);
+
+    // Buscar archivo de audio (mp3 o wav)
+    const audioFile = files.find(file => file.endsWith('.mp3') || file.endsWith('.wav'));
+
+    if (!audioFile) {
+      res.status(404).json({ error: 'Audio file not found in folder' });
+      return;
+    }
+
+    const filePath = path.join(folderPath, audioFile);
+    res.download(filePath, audioFile);
+  } catch (error) {
+    console.error(`Error downloading file for ID ${id}:`, error);
+    res.status(500).json({ 
+      error: 'Error retrieving audio file',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
   }
-
-  if (download.status === 'processing') {
-    res.status(202).json({ message: 'Download still processing' });
-    return;
-  }
-
-  if (download.status === 'failed') {
-    res.status(500).json({ error: download.error });
-    return;
-  }
-
-  const filePath = path.join(baseDirAudios, id, download.filename!);
-  res.download(filePath, download.filename!);
 }
