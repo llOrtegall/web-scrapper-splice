@@ -12,16 +12,35 @@ export const registerNewUser = async (req: Request, res: Response) => {
     return
   }
 
+  const userReq = req.user;
+
+  if (!userReq) {
+    res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    return;
+  }
+
+  if (userReq.role !== 'admin') {
+    res.status(401).json({ error: 'Unauthorized: You are not authorized to perform this action' });
+    return;
+  }
+
   await User.sync();
 
   const hashedPassword = await bcrypt.hash(password, ROUNDS_SALT);
 
   await User.create({ username, password: hashedPassword })
     .then((user) => {
-      res.status(201).json({ message: 'User created successfully', user });
+
+      const userDTO = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+      }
+
+      res.status(201).json({ message: 'User created successfully', user: userDTO });
     })
     .catch((error) => {
-      if(error instanceof Error && error.name === 'SequelizeUniqueConstraintError') {
+      if (error instanceof Error && error.name === 'SequelizeUniqueConstraintError') {
         res.status(400).json({ error: 'Username already exists, try another one' });
         return
       }
@@ -58,7 +77,7 @@ export const loginUser = async (req: Request, res: Response) => {
         role: user.role,
       }
 
-      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '2h' }, (err, token) => {
+      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '2m' }, (err, token) => {
         if (err) {
           console.log(err.message);
           res.status(401).json({ message: err.message })
