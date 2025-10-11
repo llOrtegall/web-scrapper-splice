@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { JWT_SECRECT } from '../schemas/env';
+import { JWT_SECRECT } from '../schemas/env.js';
 import jwt from 'jsonwebtoken';
 
 interface UserPayLoad extends jwt.JwtPayload {

@@ -1,7 +1,7 @@
-import { cleanAudiosFolder } from './utils/funtions';
-import { connPostgreSQL } from './database/connPg';
-import { dowloadRouter} from './routes/dowload';
-import { routerUsers } from './routes/user.r';
+import { cleanAudiosFolder } from './utils/funtions.js';
+import { connPostgreSQL } from './database/connPg.js';
+import { dowloadRouter} from './routes/dowload.js';
+import { routerUsers } from './routes/user.r.js';
 import cookieParser from 'cookie-parser';
 import express from 'express';
 import cors from 'cors';
@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 4000;
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.ORIGIN || 'http://localhost:5173',
   credentials: true
 }));
 app.use(express.json());

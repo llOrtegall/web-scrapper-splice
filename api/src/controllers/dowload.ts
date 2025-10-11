@@ -1,4 +1,4 @@
-import { runCommand, baseDirAudios } from "../utils/funtions";
+import { runCommand, baseDirAudios } from "../utils/funtions.js";
 import { Request, Response } from "express";
 import crypto from "node:crypto";
 import path from "node:path";

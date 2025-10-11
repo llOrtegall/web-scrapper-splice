@@ -1,5 +1,5 @@
 import { DataTypes, Model, CreationOptional, InferAttributes, InferCreationAttributes } from "sequelize"
-import { connPostgreSQL } from "../database/connPg"
+import { connPostgreSQL } from "../database/connPg.js"
 
 export class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<string>;

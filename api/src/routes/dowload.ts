@@ -1,5 +1,5 @@
-import { dowloadSample, downloadFile, getDownloadStatus } from "../controllers/dowload"
-import { authenticateToken } from "../middlewares/authToken";
+import { dowloadSample, downloadFile, getDownloadStatus } from "../controllers/dowload.js"
+import { authenticateToken } from "../middlewares/authToken.js";
 import { Router } from "express";
 
 const dowloadRouter = Router();

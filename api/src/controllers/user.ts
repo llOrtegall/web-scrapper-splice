@@ -1,6 +1,6 @@
-import { ENV, JWT_SECRECT, ROUNDS_SALT } from '../schemas/env'
+import { ENV, JWT_SECRECT, ROUNDS_SALT } from '../schemas/env.js'
 import { Request, Response } from "express";
-import { User } from "../models/user.m";
+import { User } from "../models/user.m.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 

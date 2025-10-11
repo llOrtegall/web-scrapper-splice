@@ -1,5 +1,5 @@
-import { registerNewUser, loginUser, UserByToken, logoutUser, getAllUsers, updateUserNameOrState, deleteUser } from '../controllers/user'
-import { authenticateToken } from '../middlewares/authToken'
+import { registerNewUser, loginUser, UserByToken, logoutUser, getAllUsers, updateUserNameOrState, deleteUser } from '../controllers/user.js'
+import { authenticateToken } from '../middlewares/authToken.js'
 import { Router } from 'express'
 
 const routerUsers = Router()
