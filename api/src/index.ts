@@ -1,5 +1,7 @@
 import { cleanAudiosFolder } from './utils/funtions';
-import { dowloadRouter} from './routes/dowload'
+import { connPostgreSQL } from './database/connPg';
+import { dowloadRouter} from './routes/dowload';
+import { routerUsers } from './routes/user.r';
 import express from 'express';
 import cors from 'cors';
 
@@ -15,9 +17,17 @@ app.get('/api/health', (req, res) => {
 });
 
 app.use('/api/v1', dowloadRouter);
+app.use('/api/v1', routerUsers);
 
 cleanAudiosFolder().then(() => {
   app.listen(PORT, () => {
     console.log(`API server is running on port http://localhost:${PORT}`);
   });
+});
+
+
+connPostgreSQL.authenticate().then(() => {
+  console.log('PostgreSQL connection has been established successfully.');
+}).catch((error) => {
+  console.error('Unable to connect to the database:', error);
 });
