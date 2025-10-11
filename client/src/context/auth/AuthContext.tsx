@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useState, type Dispatch, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 interface User {
   id: string;
@@ -24,8 +24,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // validar si existe cookie con name token 
     const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
-    
-    if(!cookie) return;
+
+    if (!cookie) {
+      logout();
+      return;
+    };
 
     axios.get('/profile')
       .then(response => {
@@ -47,6 +50,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
+    axios.post('/logout')
+      .then(response => {
+        if (response.status === 200) {
+          console.log('User logged out successfully');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      })
   };
 
   return (

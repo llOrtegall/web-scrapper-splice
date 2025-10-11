@@ -134,3 +134,13 @@ export const UserByToken = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to verify token' });
   }
 }
+
+export const logoutUser = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie('token');
+    res.status(200).json({ message: 'User logged out successfully' });
+  } catch (err) {
+    console.error('Error logging out user:', err);
+    res.status(500).json({ error: 'Failed to log out user' });
+  }
+}
