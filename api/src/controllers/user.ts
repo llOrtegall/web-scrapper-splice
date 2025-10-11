@@ -77,7 +77,7 @@ export const loginUser = async (req: Request, res: Response) => {
         role: user.role,
       }
 
-      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '2m' }, (err, token) => {
+      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '4h' }, (err, token) => {
         if (err) {
           console.log(err.message);
           res.status(401).json({ message: err.message })
@@ -101,4 +101,36 @@ export const loginUser = async (req: Request, res: Response) => {
       console.error('Error logging in user:', error);
       res.status(500).json({ error: 'Failed to log in user' });
     });
+}
+
+export const UserByToken = async (req: Request, res: Response) => {
+  try {
+    const cookie = req.headers.cookie
+
+    if (!cookie) {
+      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+      return;
+    }
+
+    const token = cookie.split('=')[1];
+
+    if (!token) {
+      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+      return;
+    }
+
+    try {
+      const decoded = jwt.verify(token, JWT_SECRECT);
+      res.status(200).json({ message: 'User found', user: decoded });
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        res.status(401).json({ message: 'Token expired' });
+        return
+      }
+      res.status(401).json({ message: 'Unauthorized' });
+    }
+  } catch (err) {
+    console.error('Error verifying token:', err);
+    res.status(500).json({ error: 'Failed to verify token' });
+  }
 }
