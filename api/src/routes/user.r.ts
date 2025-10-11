@@ -5,7 +5,7 @@ import { Router } from 'express'
 const routerUsers = Router()
 
 routerUsers.post('/register', authenticateToken, registerNewUser)
-routerUsers.get('/profile', authenticateToken, UserByToken)
+routerUsers.get('/profile', UserByToken)
 routerUsers.post('/login', loginUser)
 
 export { routerUsers }

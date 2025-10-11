@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, type Dispatch, type ReactNode } from "react";
+import axios from "axios";
+import { createContext, useContext, useEffect, useState, type Dispatch, type ReactNode } from "react";
 
 interface User {
   id: string;
@@ -10,7 +11,7 @@ interface User {
 interface AuthContext {
   isAuthenticated: boolean;
   user: User | null;
-  login: () => void;
+  login: (id: string, username: string, rol: "admin" | "user") => void;
   logout: () => void;
 }
 
@@ -20,14 +21,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = () => {
+  useEffect(() => {
+    // validar si existe cookie con name token 
+    const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
+    
+    if(!cookie) return;
+
+    axios.get('/profile')
+      .then(response => {
+        if (response.status === 200 && response.data) {
+          const { id, username, role } = response.data;
+          login(id, username, role);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      })
+  }, [])
+
+  const login = (id: string, username: string, rol: "admin" | "user") => {
     setIsAuthenticated(true);
-    setUser({
-      id: "1",
-      username: "Andrek52",
-      email: null,
-      rol: "user"
-    });
+    setUser({ id, username, email: null, rol });
   };
 
   const logout = () => {

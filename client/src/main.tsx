@@ -5,6 +5,7 @@ import axios from 'axios';
 import './index.css';
 
 axios.defaults.baseURL = import.meta.env.VITE_API_URL ?? '/api'
+axios.defaults.withCredentials = true;
 
 import { AuthProvider } from './context/auth/AuthContext.tsx'
 
