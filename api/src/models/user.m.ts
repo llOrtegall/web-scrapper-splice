@@ -10,7 +10,7 @@ export class User extends Model<InferAttributes<User>, InferCreationAttributes<U
 }
 
 User.init({
-  id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
+  id: { type: DataTypes.STRING, defaultValue: DataTypes.UUIDV4, primaryKey: true },
   username: { type: DataTypes.STRING, allowNull: false, unique: true },
   role: { type: DataTypes.STRING, allowNull: false, defaultValue: 'user' },
   is_active: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
