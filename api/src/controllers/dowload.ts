@@ -32,13 +32,22 @@ export const dowloadSample = async (req: Request, res: Response) => {
       console.log(`[${downloadId}] ${stdout}`);
       if (stderr) console.error(`[${downloadId}] ${stderr}`);
 
-      const filename = stdout.match(/Successfully downloaded:\s*(\S+\.(?:wav|mp3))/i)?.[1];
+      // Intentar extraer el filename del stdout
+      let filename = stdout.match(/Successfully downloaded:\s*(\S+\.(?:wav|mp3))/i)?.[1];
+
+      // Si no se encontró en el stdout, buscar en el filesystem
+      if (!filename) {
+        console.log(`[${downloadId}] No se encontró filename en stdout, buscando en filesystem...`);
+        const files = await fs.promises.readdir(outDir);
+        filename = files.find(file => file.endsWith('.mp3') || file.endsWith('.wav'));
+      }
 
       if (!filename) {
         downloads.set(downloadId, { status: 'failed', error: 'Could not determine downloaded file try again or verify link is correct' });
         return;
       }
 
+      console.log(`[${downloadId}] Archivo encontrado: ${filename}`);
       downloads.set(downloadId, { status: 'completed', filename });
     } catch (error) {
       console.error(`[${downloadId}] Error:`, error);
