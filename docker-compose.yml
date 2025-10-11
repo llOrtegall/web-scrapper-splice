@@ -14,8 +14,6 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - web-scrapper-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
       interval: 10s
@@ -51,10 +49,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      scraper:
-        condition: service_completed_successfully
-    networks:
-      - web-scrapper-network
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
       interval: 30s
@@ -62,39 +56,19 @@ services:
       retries: 3
       start_period: 40s
 
-  # Construir la imagen del scraper (no se ejecuta como servicio continuo)
-  scraper:
-    build:
-      context: ./scraper
-      dockerfile: Dockerfile
-    image: splice-scraper:latest
-    container_name: web-scrapper-scraper-builder
-    command: echo "Scraper image built successfully"
-    networks:
-      - web-scrapper-network
-
   # Cliente Frontend (opcional, para desarrollo)
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: nginx:alpine
     container_name: web-scrapper-client
     restart: unless-stopped
-    ports:
-      - "${CLIENT_PORT:-5173}:80"
-    environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:4000}
+    volumes:
+      - ./client:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - api
-    networks:
-      - web-scrapper-network
 
 volumes:
   postgres_data:
     driver: local
   api_audios:
     driver: local
-
-networks:
-  web-scrapper-network:
-    driver: bridge
