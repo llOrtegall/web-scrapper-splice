@@ -1,4 +1,4 @@
-import { runCommand } from "../utils/funtions";
+import { runCommand, baseDirAudios } from "../utils/funtions";
 import { Request, Response } from "express";
 import crypto from "node:crypto";
 import path from "node:path";
@@ -14,7 +14,7 @@ export const dowloadSample = async (req: Request, res: Response) => {
   }
 
   const downloadId = crypto.randomUUID();
-  const outDir = path.resolve(process.cwd(), 'audios', downloadId);
+  const outDir = path.resolve(baseDirAudios, downloadId);
 
   downloads.set(downloadId, { status: 'processing' });
 
@@ -35,7 +35,7 @@ export const dowloadSample = async (req: Request, res: Response) => {
       const filename = stdout.match(/Successfully downloaded:\s*(\S+\.(?:wav|mp3))/i)?.[1];
 
       if (!filename) {
-        downloads.set(downloadId, { status: 'failed', error: 'Could not determine downloaded file' });
+        downloads.set(downloadId, { status: 'failed', error: 'Could not determine downloaded file try again or verify link is correct' });
         return;
       }
 
@@ -94,6 +94,6 @@ export const downloadFile = async (req: Request, res: Response) => {
     return;
   }
 
-  const filePath = path.join(process.cwd(), 'audios', id, download.filename!);
+  const filePath = path.join(baseDirAudios, id, download.filename!);
   res.download(filePath, download.filename!);
 }

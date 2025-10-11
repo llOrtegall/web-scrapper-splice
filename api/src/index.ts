@@ -14,7 +14,7 @@ app.get('/api/health', (req, res) => {
   res.status(200).send('API is healthy');
 });
 
-app.use('/api/v1/download', dowloadRouter);
+app.use('/api/v1', dowloadRouter);
 
 cleanAudiosFolder().then(() => {
   app.listen(PORT, () => {

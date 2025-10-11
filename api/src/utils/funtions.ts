@@ -2,6 +2,8 @@ import { exec } from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 
+export const baseDirAudios = path.resolve(process.cwd(), 'audios');
+
 export async function runCommand(cmd: string): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
     exec(cmd, { maxBuffer: 10 * 1024 * 1024 }, (err, stdout, stderr) => {
@@ -12,7 +14,7 @@ export async function runCommand(cmd: string): Promise<{ stdout: string; stderr:
 }
 
 export async function cleanAudiosFolder() {
-  const audiosDir = path.resolve(process.cwd(), 'audios');
+  const audiosDir = baseDirAudios;
   
   try {
     // Verificar si existe la carpeta
@@ -26,5 +28,8 @@ export async function cleanAudiosFolder() {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
       console.error('Error limpiando carpeta audios:', error);
     }
+  } finally {
+    await fs.promises.mkdir(audiosDir, { recursive: true });
+    console.log('✓ Carpeta audios creada');
   }
 }
