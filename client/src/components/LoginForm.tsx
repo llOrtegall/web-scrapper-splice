@@ -1,6 +1,7 @@
-import axios from 'axios';
 import { useAuth } from '../context/auth/AuthContext';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import axios from 'axios';
 
 function LoginForm() {
   const [username, setUsername] = useState('');
@@ -22,6 +23,9 @@ function LoginForm() {
       })
       .catch(error => {
         console.error(error);
+        if(error.response.status === 401) {
+          toast.error(error.response.data.error);
+        }
       })
   };
 

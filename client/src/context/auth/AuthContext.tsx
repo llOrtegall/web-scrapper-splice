@@ -50,6 +50,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
+
+    const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
+    if (!cookie) return;
+    
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+
     axios.post('/logout')
       .then(response => {
         if (response.status === 200) {
