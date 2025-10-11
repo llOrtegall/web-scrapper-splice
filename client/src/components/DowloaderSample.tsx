@@ -2,8 +2,6 @@ import { useAuth } from '../context/auth/AuthContext';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:4000';
-
 type DownloadStatus = 'idle' | 'processing' | 'completed' | 'failed';
 
 interface Download {
@@ -25,7 +23,7 @@ function DownloaderSample() {
 
     const interval = setInterval(async () => {
       try {
-        const { data } = await axios.get<Download>(`${API_URL}/download/${downloadId}/status`);
+        const { data } = await axios.get<Download>(`/download/${downloadId}/status`);
         setStatus(data);
 
         // Si completó o falló, detener el polling
@@ -38,7 +36,7 @@ function DownloaderSample() {
         clearInterval(interval);
         setLoading(false);
       }
-    }, 3000); // Verificar cada 3 segundos
+    }, 5000); // Verificar cada 5 segundos
 
     return () => clearInterval(interval);
   }, [downloadId]);
@@ -53,10 +51,7 @@ function DownloaderSample() {
     setStatus(null);
 
     try {
-      const { data } = await axios.post<{ downloadId: string; message: string }>(
-        `${API_URL}/download`,
-        { url }
-      );
+      const { data } = await axios.post<{ downloadId: string; message: string }>(`/download`, { url });
 
       setDownloadId(data.downloadId);
       setStatus({ status: 'processing' });
@@ -71,7 +66,7 @@ function DownloaderSample() {
     if (!downloadId) return;
     // Descargar sin abrir ventana nueva
     const link = document.createElement('a');
-    link.href = `${API_URL}/download/${downloadId}/file`;
+    link.href = `/download/${downloadId}/file`;
     link.download = status?.filename || 'audio.wav';
     document.body.appendChild(link);
     link.click();
@@ -116,8 +111,8 @@ function DownloaderSample() {
           <button
             type="button"
             onClick={handleDownload}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50"
+            disabled={loading || status?.status === 'processing' || status?.status === 'completed'}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50 cursor-pointer"
           >
             {loading ? (
               <>
@@ -165,14 +160,14 @@ function DownloaderSample() {
                       <button
                         type="button"
                         onClick={handleDownloadFile}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-green-500/50"
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-green-500/50 cursor-pointer"
                       >
                         📥 Descargar Archivo
                       </button>
                       <button
                         type="button"
                         onClick={handleReset}
-                        className="sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition"
+                        className="sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
                       >
                         🔄 Nueva descarga
                       </button>
@@ -193,7 +188,7 @@ function DownloaderSample() {
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition"
+                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
                     >
                       🔄 Intentar de nuevo
                     </button>
