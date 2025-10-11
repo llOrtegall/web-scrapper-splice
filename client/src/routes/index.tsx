@@ -1,8 +1,9 @@
-import DownloaderSample from '../components/DowloaderSample';
 import { createBrowserRouter } from 'react-router';
 import Loading from '../components/ui/Loading';
-import { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import Root from './Root';
+
+const MainPage = lazy(() => import('../components/DowloaderSample'));
 
 export const BrowserRouter = createBrowserRouter([
   {
@@ -11,8 +12,9 @@ export const BrowserRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Suspense fallback={<Loading />}>
-          <DownloaderSample />
+        element: 
+        <Suspense fallback={<Loading />}>
+          <MainPage />
         </Suspense>
       },
     ]

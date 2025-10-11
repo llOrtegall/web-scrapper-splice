@@ -7,9 +7,9 @@ import './index.css';
 axios.defaults.baseURL = import.meta.env.VITE_API_URL ?? '/api'
 axios.defaults.withCredentials = true;
 
-import { Toaster } from 'sonner';
 import { BrowserRouter } from './routes/index';
 import { AuthProvider } from './context/auth/AuthContext';
+import { Toaster } from 'sonner';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
