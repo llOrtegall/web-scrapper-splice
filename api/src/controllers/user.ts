@@ -49,6 +49,100 @@ export const registerNewUser = async (req: Request, res: Response) => {
     });
 }
 
+export const getAllUsers = async (req: Request, res: Response) => {
+  const userReq = req.user;
+
+  if (!userReq) {
+    res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    return;
+  }
+
+  if (userReq.role !== 'admin') {
+    res.status(401).json({ error: 'Unauthorized: You are not authorized to perform this action' });
+    return;
+  }
+
+  await User.sync();
+
+  await User.findAll()
+    .then((users) => {
+      const usersDTO = users.map((user) => {
+        return {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+        }
+      })
+      res.status(200).json({ message: 'Users found', users: usersDTO });
+    })
+    .catch((error) => {
+      console.error('Error getting users:', error);
+      res.status(500).json({ error: 'Failed to get users' });
+    });
+}
+
+export const updateUserNameOrState = async (req: Request, res: Response) => {
+  const { username, role } = req.body;
+  const userReq = req.user;
+
+  if (!userReq) {
+    res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    return;
+  }
+
+  if (userReq.role !== 'admin') {
+    res.status(401).json({ error: 'Unauthorized: You are not authorized to perform this action' });
+    return;
+  }
+
+  if (!username || !role) {
+    res.status(400).json({ error: 'Username and role are required' });
+    return
+  }
+
+  await User.sync();
+
+  await User.update({ role }, { where: { username } })
+    .then(() => {
+      res.status(200).json({ message: 'User updated successfully' });
+    })
+    .catch((error) => {
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Failed to update user' });
+    });
+}
+  
+export const deleteUser = async (req: Request, res: Response) => {
+  const { username } = req.body;
+  const userReq = req.user;
+
+  if (!userReq) {
+    res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    return;
+  }
+
+  if (userReq.role !== 'admin') {
+    res.status(401).json({ error: 'Unauthorized: You are not authorized to perform this action' });
+    return;
+  }
+
+  if (!username) {
+    res.status(400).json({ error: 'Username is required' });
+    return
+  }
+
+  await User.sync();
+
+  await User.destroy({ where: { username } })
+    .then(() => {
+      res.status(200).json({ message: 'User deleted successfully' });
+    })
+    .catch((error) => {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ error: 'Failed to delete user' });
+    });
+}
+
 export const loginUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
 

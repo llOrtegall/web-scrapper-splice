@@ -1,11 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 
 interface AdminPanelProps {
   className?: string;
 }
 
+interface User {
+  id: number;
+  username: string;
+  role: 'admin' | 'user';
+}
+
 export default function AdminPanel({ className = '' }: AdminPanelProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [newUsername, setNewUsername] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [showCreateUser, setShowCreateUser] = useState(false);
+
+  const fetchUsers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await axios.get<{ message: string; users: User[] }>('/users');
+      setUsers(data.users);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError('Error al cargar usuarios');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchUsers();
+    }
+  }, [isOpen, fetchUsers]);
 
   const handleAdminClick = () => {
     setIsOpen(!isOpen);
@@ -13,6 +46,60 @@ export default function AdminPanel({ className = '' }: AdminPanelProps) {
 
   const handleClose = () => {
     setIsOpen(false);
+    setShowCreateUser(false);
+    setNewUsername('');
+    setNewPassword('');
+    setError(null);
+  };
+
+  const handleToggleRole = async (username: string, currentRole: string) => {
+    const newRole = currentRole === 'admin' ? 'user' : 'admin';
+    try {
+      await axios.post('/update', { username, role: newRole });
+      await fetchUsers();
+    } catch (err) {
+      console.error('Error updating user:', err);
+      setError('Error al actualizar usuario');
+    }
+  };
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername.trim() || !newPassword.trim()) {
+      setError('Usuario y contraseña son requeridos');
+      return;
+    }
+
+    try {
+      await axios.post('/register', { username: newUsername, password: newPassword });
+      setNewUsername('');
+      setNewPassword('');
+      setShowCreateUser(false);
+      await fetchUsers();
+    } catch (err) {
+      console.error('Error creating user:', err);
+      const errorMsg = axios.isAxiosError(err)
+        ? err.response?.data?.error || 'Error al crear usuario'
+        : 'Error al crear usuario';
+      setError(errorMsg);
+    }
+  };
+
+  const handleDeleteUser = async (username: string) => {
+    if (!confirm(`¿Estás seguro de eliminar al usuario "${username}"?`)) {
+      return;
+    }
+
+    try {
+      await axios.post('/delete', { username });
+      await fetchUsers();
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      const errorMsg = axios.isAxiosError(err)
+        ? err.response?.data?.error || 'Error al eliminar usuario'
+        : 'Error al eliminar usuario';
+      setError(errorMsg);
+    }
   };
 
   return (
@@ -29,10 +116,10 @@ export default function AdminPanel({ className = '' }: AdminPanelProps) {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] flex items-center justify-center p-4">
-          <div className="bg-slate-800 border border-slate-600 rounded-xl p-6 max-w-md w-full">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-white">Panel de Administración</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[9998] flex items-center justify-center p-4" onClick={handleClose}>
+          <div className="bg-slate-800 border border-slate-600 rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white">Panel de Administración</h2>
               <button
                 onClick={handleClose}
                 className="text-slate-400 hover:text-white transition"
@@ -43,47 +130,146 @@ export default function AdminPanel({ className = '' }: AdminPanelProps) {
               </button>
             </div>
 
-            <div className="space-y-4 text-slate-300">
-              <div className="bg-slate-700/50 p-4 rounded-lg">
-                <h3 className="font-medium text-white mb-2">Estado del Sistema</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Servidor:</span>
-                    <span className="text-green-400">En línea</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Base de datos:</span>
-                    <span className="text-green-400">Conectado</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Usuarios activos:</span>
-                    <span>1</span>
-                  </div>
-                </div>
+            {/* Mensajes de error */}
+            {error && (
+              <div className="mb-4 bg-red-500/10 border border-red-500/50 rounded-lg p-3 text-red-400 text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* Gestión de usuarios */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Usuarios del Sistema</h3>
+                <button
+                  onClick={() => setShowCreateUser(!showCreateUser)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition text-sm"
+                >
+                  {showCreateUser ? 'Cancelar' : '+ Crear Usuario'}
+                </button>
               </div>
 
-              <div className="bg-slate-700/50 p-4 rounded-lg">
-                <h3 className="font-medium text-white mb-2">Estadísticas</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Descargas hoy:</span>
-                    <span>0</span>
+              {/* Formulario crear usuario */}
+              {showCreateUser && (
+                <form onSubmit={handleCreateUser} className="bg-slate-700/50 p-4 rounded-lg mb-4 space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Usuario</label>
+                    <input
+                      type="text"
+                      value={newUsername}
+                      onChange={(e) => setNewUsername(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      placeholder="Nombre de usuario"
+                    />
                   </div>
-                  <div className="flex justify-between">
-                    <span>Total descargas:</span>
-                    <span>0</span>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Contraseña</label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-900/50 border border-slate-600 text-white placeholder-slate-500 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      placeholder="Contraseña"
+                    />
                   </div>
-                </div>
+                  <button
+                    type="submit"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                  >
+                    Crear Usuario
+                  </button>
+                </form>
+              )}
+
+              {/* Lista de usuarios */}
+              <div className="bg-slate-700/50 rounded-lg overflow-hidden">
+                {loading ? (
+                  <div className="p-8 text-center text-slate-400">
+                    <svg className="animate-spin h-8 w-8 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Cargando usuarios...
+                  </div>
+                ) : users.length === 0 ? (
+                  <div className="p-8 text-center text-slate-400">
+                    No hay usuarios registrados
+                  </div>
+                ) : (
+                  <div className="divide-y divide-slate-600">
+                    {users.map((user) => (
+                      <div key={user.id} className="p-4 flex items-center justify-between hover:bg-slate-700/30 transition">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center">
+                            <svg className="w-6 h-6 text-slate-300" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-white font-medium">{user.username}</p>
+                            <p className="text-xs text-slate-400">ID: {user.id}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            user.role === 'admin' 
+                              ? 'bg-purple-500/20 text-purple-300' 
+                              : 'bg-blue-500/20 text-blue-300'
+                          }`}>
+                            {user.role === 'admin' ? 'Admin' : 'Usuario'}
+                          </span>
+                          <button
+                            onClick={() => handleToggleRole(user.username, user.role)}
+                            className="bg-slate-600 hover:bg-slate-500 text-white px-3 py-1 rounded-lg text-sm transition"
+                            title="Cambiar rol"
+                          >
+                            {user.role === 'admin' ? 'Quitar Admin' : 'Hacer Admin'}
+                          </button>
+                          <button
+                            onClick={() => handleDeleteUser(user.username)}
+                            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm transition"
+                            title="Eliminar usuario"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="mt-6 flex gap-3">
-              <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition">
-                Ver Logs
-              </button>
-              <button className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition">
-                Configuración
-              </button>
+            {/* Estadísticas */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-slate-700/50 p-4 rounded-lg">
+                <h3 className="font-medium text-white mb-2 text-sm">Sistema</h3>
+                <div className="space-y-2 text-xs text-slate-300">
+                  <div className="flex justify-between">
+                    <span>Total usuarios:</span>
+                    <span className="font-semibold text-white">{users.length}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Administradores:</span>
+                    <span className="font-semibold text-purple-400">{users.filter(u => u.role === 'admin').length}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-slate-700/50 p-4 rounded-lg">
+                <h3 className="font-medium text-white mb-2 text-sm">Estado</h3>
+                <div className="space-y-2 text-xs text-slate-300">
+                  <div className="flex justify-between">
+                    <span>Servidor:</span>
+                    <span className="text-green-400 font-semibold">En línea</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Base de datos:</span>
+                    <span className="text-green-400 font-semibold">Conectado</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
