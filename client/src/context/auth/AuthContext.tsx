@@ -25,13 +25,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { login: loginApi, logout: logoutApi, getProfile } = useAuthActions();
 
   useEffect(() => {
-    // validar si existe cookie con name token
-    const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
+    // // validar si existe cookie con name token
+    // const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('token='));
 
-    if (!cookie) {
-      setLoading(false);
-      return;
-    }
+    // if (!cookie) {
+    //   setLoading(false);
+    //   return;
+    // }
 
     const checkAuth = async () => {
       try {
