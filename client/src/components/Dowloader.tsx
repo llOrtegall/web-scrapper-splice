@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useAuth } from '../context/auth/AuthContext';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-
-const API_URL = 'http://localhost:4000';
+import AdminPanel from './AdminPanel';
 
 type DownloadStatus = 'idle' | 'processing' | 'completed' | 'failed';
 
@@ -11,19 +11,24 @@ interface Download {
   error?: string;
 }
 
-function App() {
+function DownloaderSample() {
   const [url, setUrl] = useState('');
   const [downloadId, setDownloadId] = useState<string | null>(null);
   const [status, setStatus] = useState<Download | null>(null);
   const [loading, setLoading] = useState(false);
+  const { user, logout } = useAuth();
 
-  // Polling para verificar el estado de la descarga
+  console.log(user);
+
+  // Polling optimizado para verificar el estado de la descarga
   useEffect(() => {
     if (!downloadId) return;
 
-    const interval = setInterval(async () => {
+    let interval: ReturnType<typeof setInterval>;
+
+    const checkStatus = async () => {
       try {
-        const { data } = await axios.get<Download>(`${API_URL}/download/${downloadId}/status`);
+        const { data } = await axios.get<Download>(`/download/${downloadId}/status`);
         setStatus(data);
 
         // Si completó o falló, detener el polling
@@ -33,15 +38,24 @@ function App() {
         }
       } catch (error) {
         console.error('Error checking status:', error);
+        setStatus({ status: 'failed', error: 'Error verificando estado' });
         clearInterval(interval);
         setLoading(false);
       }
-    }, 3000); // Verificar cada 3 segundos
+    };
 
-    return () => clearInterval(interval);
+    // Primera verificación inmediata
+    checkStatus();
+
+    // Polling cada 2 segundos para mejor UX
+    interval = setInterval(checkStatus, 2000);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [downloadId]);
 
-  const handleDownload = async () => {
+  const handleDownload = useCallback(async () => {
     if (!url.trim()) {
       alert('Por favor ingresa una URL de Splice');
       return;
@@ -49,42 +63,59 @@ function App() {
 
     setLoading(true);
     setStatus(null);
+    setDownloadId(null);
 
     try {
-      const { data } = await axios.post<{ downloadId: string; message: string }>(
-        `${API_URL}/download`,
-        { url }
-      );
-      
+      const { data } = await axios.post<{ downloadId: string; message: string }>(`/download`, { url });
       setDownloadId(data.downloadId);
       setStatus({ status: 'processing' });
     } catch (error) {
       console.error('Error starting download:', error);
-      alert('Error al iniciar la descarga');
+      const errorMsg = axios.isAxiosError(error)
+        ? error.response?.data?.error || error.message
+        : 'Error al iniciar la descarga';
+      alert(errorMsg);
       setLoading(false);
     }
-  };
+  }, [url]);
 
-  const handleDownloadFile = () => {
+  const handleDownloadFile = useCallback(async () => {
     if (!downloadId) return;
-    // Descargar sin abrir ventana nueva
-    const link = document.createElement('a');
-    link.href = `${API_URL}/download/${downloadId}/file`;
-    link.download = status?.filename || 'audio.wav';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
-  const handleReset = () => {
+    try {
+      // Descargar como blob para evitar abrir nueva ventana
+      const response = await axios.get(`/download/${downloadId}/file`, {
+        responseType: 'blob'
+      });
+
+      // Crear URL temporal del blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = status?.filename || 'audio.mp3';
+
+      // Agregar, click y remover
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Liberar el URL temporal
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      alert('Error al descargar el archivo');
+    }
+  }, [downloadId, status?.filename]);
+
+  const handleReset = useCallback(() => {
     setUrl('');
     setDownloadId(null);
     setStatus(null);
     setLoading(false);
-  };
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative">
       <div className="w-full max-w-2xl bg-slate-800/90 backdrop-blur-sm border border-slate-700 rounded-2xl shadow-2xl p-6 sm:p-8">
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-2 sm:mb-3">
@@ -114,8 +145,8 @@ function App() {
           <button
             type="button"
             onClick={handleDownload}
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50"
+            disabled={loading || status?.status === 'processing' || status?.status === 'completed'}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/50 cursor-pointer"
           >
             {loading ? (
               <>
@@ -132,12 +163,11 @@ function App() {
 
           {/* Estado de la descarga */}
           {status && (
-            <div className={`p-4 sm:p-5 rounded-lg border-2 backdrop-blur-sm ${
-              status.status === 'processing' ? 'bg-blue-500/10 border-blue-500/50' :
+            <div className={`p-4 sm:p-5 rounded-lg border-2 backdrop-blur-sm ${status.status === 'processing' ? 'bg-blue-500/10 border-blue-500/50' :
               status.status === 'completed' ? 'bg-green-500/10 border-green-500/50' :
-              status.status === 'failed' ? 'bg-red-500/10 border-red-500/50' :
-              'bg-slate-700/30 border-slate-600'
-            }`}>
+                status.status === 'failed' ? 'bg-red-500/10 border-red-500/50' :
+                  'bg-slate-700/30 border-slate-600'
+              }`}>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                 {status.status === 'processing' && (
                   <div className="flex items-center gap-2 text-blue-400">
@@ -164,14 +194,14 @@ function App() {
                       <button
                         type="button"
                         onClick={handleDownloadFile}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-green-500/50"
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 px-4 rounded-lg transition shadow-lg hover:shadow-green-500/50 cursor-pointer"
                       >
                         📥 Descargar Archivo
                       </button>
                       <button
                         type="button"
                         onClick={handleReset}
-                        className="sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition"
+                        className="sm:w-auto bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
                       >
                         🔄 Nueva descarga
                       </button>
@@ -192,7 +222,7 @@ function App() {
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition"
+                      className="w-full bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
                     >
                       🔄 Intentar de nuevo
                     </button>
@@ -212,8 +242,24 @@ function App() {
           )}
         </div>
       </div>
+
+      <button
+        type="button"
+        onClick={logout}
+        className="absolute top-4 right-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
+      >
+        Cerrar sesión
+      </button>
+
+      <div className="absolute top-4 left-4">
+        {
+          user?.rol === 'admin' && (
+            <AdminPanel />
+          )
+        }
+      </div>
     </div>
   );
 }
 
-export default App;
+export default DownloaderSample;

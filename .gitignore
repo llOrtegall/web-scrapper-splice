@@ -4,6 +4,8 @@ out
 bun.lock
 setup_scraper_ubuntu.sh
 audios
+api_audios
+postgres_data
 
 # dependencies (bun install)
 node_modules
@@ -53,6 +55,7 @@ node_modules
 dist
 dist-ssr
 *.local
+package-lock.json
 
 # Editor directories and files
 .vscode/*
@@ -64,3 +67,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.sql
