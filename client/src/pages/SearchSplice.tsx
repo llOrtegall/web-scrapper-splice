@@ -3,57 +3,7 @@ import { postSearchRequest } from "../services/searchRequest";
 import type { Data, Item } from "../types/searhResponse";
 import { useState, useRef, useEffect } from "react";
 import { decodeSpliceAudio } from "../utils/decoder";
-
-// Web-compatible HTTP client
-interface Response<T> {
-  data: T;
-}
-
-const ResponseType = {
-  Binary: "arraybuffer" as const,
-};
-type ResponseType = typeof ResponseType[keyof typeof ResponseType];
-
-async function fetch<T>(url: string, options: {
-  method: string;
-  responseType?: ResponseType;
-  body?: { type: "Json"; payload: any };
-}
-): Promise<Response<T>> {
-  // Convert Splice S3 URLs to use proxy to avoid CORS
-  let proxyUrl = url;
-
-  if (url.includes("spliceproduction.s3")) {
-    // Handle both s3.amazonaws.com and s3.us-west-1.amazonaws.com patterns
-    proxyUrl = url.replace(/https:\/\/spliceproduction\.s3[^\/]*\.amazonaws\.com/, "http://localhost:3000/api/s3");
-  }
-
-  const fetchOptions: RequestInit = {
-    method: options.method,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  if (options.body && options.body.type === "Json") {
-    fetchOptions.body = JSON.stringify(options.body.payload);
-  }
-
-  console.log("on fetch function: " + proxyUrl);
-  
-
-  const response = await window.fetch(proxyUrl, fetchOptions);
-
-  let data: T;
-
-  if (options.responseType === ResponseType.Binary) {
-    data = (await response.arrayBuffer()) as T;
-  } else {
-    data = (await response.json()) as T;
-  }
-
-  return { data };
-}
+import axios from "axios";
 
 function SearchSpliceSample() {
   // Formatea duración en ms a mm:ss
@@ -113,6 +63,7 @@ function SearchSpliceSample() {
 
   async function handlePlayClick(sample: Item) {
     const audioUrl = getAudio(sample);
+
     if (!audioUrl) return;
 
     // Si ya está reproduciendo este sample, detenerlo
@@ -136,7 +87,7 @@ function SearchSpliceSample() {
       }
 
       // Pedir el buffer binario usando la API personalizada
-      const { data: buffer } = await fetch<ArrayBuffer>(audioUrl, { method: "GET", responseType: ResponseType.Binary });
+      const { data: buffer } = await axios.get('/s3', { responseType: 'arraybuffer', params: { url: audioUrl } })
 
       // Decodificar el audio de Splice
       const encodedData = new Uint8Array(buffer);
@@ -169,7 +120,7 @@ function SearchSpliceSample() {
 
     try {
       // Fetch del audio usando la API personalizada
-      const { data: buffer } = await fetch<ArrayBuffer>(audioUrl, { method: "GET", responseType: ResponseType.Binary });
+      const { data: buffer } = await axios.get<ArrayBuffer>('/s3', { responseType: 'arraybuffer', params: { url: audioUrl } })
 
       // Decodificar el audio de Splice
       const encodedData = new Uint8Array(buffer);

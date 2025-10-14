@@ -22,13 +22,15 @@ export const searchSpliceGraphQL = async (req: Request, res: Response) => {
 };
 
 export const proxyS3 = async (req: Request, res: Response) => {
-  try {
-    const s3Path = req.path.replace("/api/s3", "");
-    const s3Url = `https://spliceproduction.s3.us-west-1.amazonaws.com${s3Path}`;
-    
-    console.log("Fetching S3:", s3Url);
+  const url = req.query.url as string;
 
-    const response = await fetch(s3Url, {
+  if (!url) {
+    return res.status(400).json({ error: "Missing 'url' query parameter" });
+  }
+
+  try {
+
+    const response = await fetch(url, {
       headers: {
         "Origin": "https://splice.com",
         "Referer": "https://splice.com/",
@@ -39,7 +41,6 @@ export const proxyS3 = async (req: Request, res: Response) => {
       return res.status(response.status).send("Error fetching S3 file");
     }
 
-    // Copiar headers importantes
     const contentType = response.headers.get("content-type");
     if (contentType) {
       res.setHeader("Content-Type", contentType);
