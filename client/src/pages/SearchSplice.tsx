@@ -5,7 +5,7 @@ import type { Data, Item } from "../types/searhResponse";
 import { useState, useRef, useEffect } from "react";
 import { decodeSpliceAudio } from "../utils/decoder";
 import axios from "axios";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
   Accordion,
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function SearchSpliceSample() {
   // Formatea duración en ms a mm:ss
@@ -174,15 +175,16 @@ function SearchSpliceSample() {
   }
 
   return (
-    <Card className="px-12 py-6 my-6">
+    <Card className="grid grid-cols-12 h-screen">
 
-      <CardContent className="mb-6">
-        <form onSubmit={handleClick} className="flex gap-2">
+      <CardContent className="flex flex-col space-y-8 pt-8 col-span-10">
+        <form onSubmit={handleClick} className="flex gap-2 ">
           <Label>
             Search Sample:
           </Label>
           <Input
             type="text"
+
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="MVP... Rap... Guitar... Piano..."
@@ -196,134 +198,133 @@ function SearchSpliceSample() {
             {loading ? "Searching..." : "Search"}
           </Button>
         </form>
-      </CardContent>
+        <ScrollArea className="h-[80vh] w-full ">
+          <CardContent className="mb-6">
+            {items.length > 0 ? (
+              <>
+                <ul className="space-y-2">
+                  {items.map(sample => (
+                    <li key={sample.uuid} className="grid p-3 rounded bg-gray-800 border border-gray-700 grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4 items-center">
 
-      <CardContent className="mb-6">
-        {categories ? (
-          <Accordion type="single" collapsible>
-            {
-              categories.categories.map(c => (
-                <AccordionItem key={c.uuid} value={c.uuid}>
-                  <AccordionTrigger>{c.name}</AccordionTrigger>
-                  <AccordionContent>
-                    {c.description}
-                    <ul className="flex flex-wrap gap-2 mt-2">
-                      {c.subcategories.map(sub => (
-                        // <li key={sub.uuid}>{sub.name}</li>
-                        <Badge
-                          key={sub.uuid}
-                          variant="default"
-                          className="cursor-pointer hover:bg-blue-300"
+                      <figure className="flex items-center justify-around gap-2 col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2">
+                        <img src={extractImageUrl(sample)} alt={sample.name} className="rounded-sm" width={68} height={68} loading="lazy" />
+
+                        <button className="p-1 rounded bg-gray-700">
+                          <AudioLines className="w-8 h-8 text-blue-200" />
+                        </button>
+
+                        <button
+                          onClick={() => handlePlayClick(sample)}
+                          className={`p-1 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer flex items-center justify-center relative`}
+                          disabled={audioLoading && playingId === sample.uuid}
+                          title={playingId === sample.uuid ? "Stop" : "Play"}
                         >
-                          {sub.name}
-                        </Badge>
-                      ))}
-                    </ul>
+                          {playingId === sample.uuid ? (
+                            <StopCircle className="w-8 h-8 text-red-400" />
+                          ) : (
+                            <PlayCircle className="w-8 h-8 text-yellow-300" />
+                          )}
+                          {audioLoading && playingId === sample.uuid && (
+                            <span className="absolute right-0 top-0 text-xs text-blue-300 animate-pulse">Loading...</span>
+                          )}
+                        </button>
 
+                        <button
+                          onClick={() => handleDownload(sample)}
+                          className="p-1 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer"
+                          title="Download sample"
+                        >
+                          <Download className="w-8 h-8 text-green-300" />
+                        </button>
 
-                  </AccordionContent>
-                </AccordionItem>
-              ))
-            }
-          </Accordion>
-        ) : (
-          <p>No categories found.</p>
-        )}
+                      </figure>
+
+                      <section className="flex flex-col justify-center col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4">
+                        <div
+                          className="font-bold text-blue-300 truncate max-w-[180px] md:max-w-[320px] lg:max-w-[480px]"
+                          title={sample.name.split("/").pop()}
+                        >
+                          {sample.name.split("/").pop()}
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <span>BPM: {sample.bpm ?? "---"}</span>
+                          <span className="ml-4">Type: {sample.asset_category_slug ?? "-"}</span>
+                        </div>
+                      </section>
+
+                      <div className="flex items-center col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2">
+                        <canvas
+                          width={250}
+                          height={30}
+                          className="bg-gray-700 rounded shadow-inner border border-gray-600"
+                          style={{
+                            display: "block",
+                            boxSizing: "border-box",
+                            outline: "none",
+                            transition: "box-shadow 0.2s",
+                          }}
+                        ></canvas>
+                      </div>
+
+                      <section className="flex flex-col justify-center ml-auto text-right col-span-1">
+                        <div>Time: {formatDuration(sample.duration)}</div>
+                      </section>
+
+                      <section className="flex flex-col justify-center ml-auto text-right col-span-1">
+                        <div>Key: {sample.key ?? "-"}</div>
+                      </section>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <div className="text-gray-400">No results yet.</div>
+            )}
+          </CardContent>
+        </ScrollArea>
       </CardContent>
 
-      <CardContent className="mb-6">
+      <CardContent className="col-span-2">
+        <CardHeader>
+          <CardTitle className="text-yellow-400">Genres</CardTitle>
+        </CardHeader>
+        <ScrollArea className="h-[90vh]">
+          <CardContent>
+            {categories ? (
+              <Accordion type="single" collapsible>
+                {
+                  categories.categories.map(c => (
+                    <AccordionItem key={c.uuid} value={c.uuid}>
+                      <AccordionTrigger>{c.name}</AccordionTrigger>
+                      <AccordionContent>
+                        {c.description}
+                        <ul className="flex flex-col gap-2">
+                          {c.subcategories.map(sub => (
+                            // <li key={sub.uuid}>{sub.name}</li>
+                            <Badge
+                              key={sub.uuid}
+                              variant="default"
+                              className="cursor-pointer hover:bg-blue-300"
+                            >
+                              {sub.name}
+                            </Badge>
+                          ))}
+                        </ul>
 
 
-
-        {items.length > 0 ? (
-          <>
-            <ul className="space-y-2 ">
-              <ul className="grid p-3 rounded bg-gray-800 border border-gray-700 grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4 items-center font-bold text-gray-400 mb-1 text-ce">
-                <li className="col-span-2">audio</li>
-                <li className="col-span-4">name</li>
-                <li className="col-span-2">progress</li>
-                <li className="col-span-2">time</li>
-                <li className="col-span-2">key</li>
-              </ul>
-              {items.map(sample => (
-                <li key={sample.uuid} className="grid p-3 rounded bg-gray-800 border border-gray-700 grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4 items-center">
-
-                  <figure className="flex items-center justify-around gap-2 col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2">
-                    <img src={extractImageUrl(sample)} alt={sample.name} className="rounded-sm" width={68} height={68} loading="lazy" />
-
-                    <button className="p-1 rounded bg-gray-700">
-                      <AudioLines className="w-8 h-8 text-blue-200" />
-                    </button>
-
-                    <button
-                      onClick={() => handlePlayClick(sample)}
-                      className={`p-1 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer flex items-center justify-center relative`}
-                      disabled={audioLoading && playingId === sample.uuid}
-                      title={playingId === sample.uuid ? "Stop" : "Play"}
-                    >
-                      {playingId === sample.uuid ? (
-                        <StopCircle className="w-8 h-8 text-red-400" />
-                      ) : (
-                        <PlayCircle className="w-8 h-8 text-yellow-300" />
-                      )}
-                      {audioLoading && playingId === sample.uuid && (
-                        <span className="absolute right-0 top-0 text-xs text-blue-300 animate-pulse">Loading...</span>
-                      )}
-                    </button>
-
-                    <button
-                      onClick={() => handleDownload(sample)}
-                      className="p-1 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer"
-                      title="Download sample"
-                    >
-                      <Download className="w-8 h-8 text-green-300" />
-                    </button>
-
-                  </figure>
-
-                  <section className="flex flex-col justify-center col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4">
-                    <div
-                      className="font-bold text-blue-300 truncate max-w-[180px] md:max-w-[320px] lg:max-w-[480px]"
-                      title={sample.name.split("/").pop()}
-                    >
-                      {sample.name.split("/").pop()}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span>BPM: {sample.bpm ?? "---"}</span>
-                      <span className="ml-4">Type: {sample.asset_category_slug ?? "-"}</span>
-                    </div>
-                  </section>
-
-                  <div className="flex items-center col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2">
-                    <canvas
-                      width={250}
-                      height={30}
-                      className="bg-gray-700 rounded shadow-inner border border-gray-600"
-                      style={{
-                        display: "block",
-                        boxSizing: "border-box",
-                        outline: "none",
-                        transition: "box-shadow 0.2s",
-                      }}
-                    ></canvas>
-                  </div>
-
-                  <section className="flex flex-col justify-center ml-auto text-right col-span-1">
-                    <div>Time: {formatDuration(sample.duration)}</div>
-                  </section>
-
-                  <section className="flex flex-col justify-center ml-auto text-right col-span-1">
-                    <div>Key: {sample.key ?? "-"}</div>
-                  </section>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <div className="text-gray-400">No results yet.</div>
-        )}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))
+                }
+              </Accordion>
+            ) : (
+              <p>No genres found.</p>
+            )}
+          </CardContent>
+        </ScrollArea>
       </CardContent>
-    </Card>
+
+    </Card >
   );
 }
 
