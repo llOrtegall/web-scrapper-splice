@@ -1,9 +1,11 @@
+import { AdminRoute } from '@/components/ProtectedRoute';
+import DownloaderSample from '@/components/Dowloader';
 import { createBrowserRouter } from 'react-router';
-import Loading from '../components/ui/Loading';
-import { lazy, Suspense } from 'react';
+import AdminPanel from '@/components/AdminPanel';
+import LoginPage from '@/pages/Login';
 import Root from './Root';
 
-const MainPage = lazy(() => import('../components/Dowloader'));
+import SearchSpliceSample from '@/pages/SearchSplice';
 
 export const BrowserRouter = createBrowserRouter([
   {
@@ -12,11 +14,24 @@ export const BrowserRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element:
-        <Suspense fallback={<Loading />}>
-          <MainPage />
-        </Suspense>
+        element: <SearchSpliceSample />
       },
+      {
+        path: 'downloader',
+        element: <DownloaderSample />
+      },
+      {
+        path: '/admin-panel',
+        element: (
+          <AdminRoute>
+            <AdminPanel />
+          </AdminRoute>
+        )
+      }
     ]
+  },
+  {
+    path: '/login',
+    element: <LoginPage />
   }
 ]);
