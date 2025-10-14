@@ -5,6 +5,8 @@ import AdminPanel from '@/components/AdminPanel';
 import LoginPage from '@/pages/Login';
 import Root from './Root';
 
+import SearchSpliceSample from '@/pages/SearchSplice';
+
 export const BrowserRouter = createBrowserRouter([
   {
     path: '/',
@@ -12,7 +14,7 @@ export const BrowserRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>Home Page</div>
+        element: <SearchSpliceSample />
       },
       {
         path: 'downloader',
