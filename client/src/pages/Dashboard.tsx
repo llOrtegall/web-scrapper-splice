@@ -17,7 +17,7 @@ export default function Page() {
             />
           </div>
         </header>
-        <main>
+        <main className="px-2">
           <Outlet />
         </main>
       </SidebarInset>

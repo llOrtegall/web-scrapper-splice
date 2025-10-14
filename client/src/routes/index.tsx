@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import Root from './Root';
+import DownloaderSample from '@/components/Dowloader';
 
 export const BrowserRouter = createBrowserRouter([
   {
@@ -8,7 +9,7 @@ export const BrowserRouter = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <div>Home</div>
+        element: <DownloaderSample />
       },
     ]
   }
