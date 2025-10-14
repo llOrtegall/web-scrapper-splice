@@ -1,8 +1,8 @@
 import { useAuth } from '../context/auth/AuthContext';
-import { Outlet } from 'react-router';
 import { lazy } from 'react';
 
 const LoginPage = lazy(() => import('@/pages/Login'));
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
 
 function Root() {
   const { user } = useAuth();
@@ -11,7 +11,7 @@ function Root() {
     return <LoginPage />
   }
 
-  return <Outlet />
+  return <Dashboard />;
 }
 
 export default Root;  

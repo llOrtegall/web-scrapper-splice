@@ -188,7 +188,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
         res.status(200)
           .cookie(
-            "token",
+            "splice-token-winkermind",
             token,
             {
               httpOnly: ENV === 'dev' ? false : true,
@@ -214,15 +214,23 @@ export const UserByToken = async (req: Request, res: Response) => {
       return;
     }
 
-    const token = cookie.split('=')[1];
+    //agarrar el token que tiene de nombre splice-token-winkermind
+    const token = cookie.split(';').find(c => c.trim().startsWith('splice-token-winkermind='));
 
     if (!token) {
       res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
       return;
     }
 
+    const tokenValue = token.split('=')[1];
+
+    if (!tokenValue) {
+      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+      return;
+    }
+
     try {
-      const decoded = jwt.verify(token, JWT_SECRECT);
+      const decoded = jwt.verify(tokenValue, JWT_SECRECT);
       res.status(200).json({ message: 'User found', user: decoded });
     } catch (err) {
       if (err instanceof jwt.TokenExpiredError) {
