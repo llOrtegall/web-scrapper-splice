@@ -46,9 +46,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         <CardHeader>
           <figure>
             <img
-              src="/logo3.png"
+              src="/logo.svg"
               alt="Winkermind Logo"
-              className="mx-auto h-14 w-34 object-contain"
+              className="mx-auto h-24 w-36 object-contain"
             />
           </figure>
           <CardTitle className="pb-2">Welcome to Splice Demo</CardTitle>

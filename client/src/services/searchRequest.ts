@@ -1,5 +1,16 @@
 import type { DataResponse } from "../types/searhResponse";
+import type { DataGenresResponse } from '../types/genresResponse';
 import axios from "axios"
+
+export function getGenresSplice(){
+  return {
+    operationName:"CategoryList",
+    variables:{
+      tagCategory:"genres"
+    },
+    query:"query CategoryList($tagCategory: String!) {\n  categories: tagCategoryList(permalink_slug: $tagCategory, v2Enabled: true) {\n    uuid\n    permalink_slug\n    name\n    categories {\n      uuid\n      name\n      permalink\n      description\n      altDescription\n      altName\n      tags {\n        uuid\n        label\n        __typename\n      }\n      subcategories {\n        uuid\n        name\n        permalink\n        description\n        altDescription\n        altName\n        tags {\n          uuid\n          label\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}"
+  }
+}
 
 export function createSearchRequest(queryStr: string) {
   return {
@@ -29,6 +40,16 @@ export async function postSearchRequest(query: string) {
   try {
     const response = await axios.post<DataResponse>("/graphql", request);
     return response.data?.data;
+  } catch (error) {
+    return { error: "Error during request: " + (error as Error).message };
+  }
+}
+
+export async function postGenresRequest() {
+  const request = getGenresSplice();
+  try {
+    const response = await axios.post<DataGenresResponse>("/graphql", request);
+    return response.data?.data.categories;
   } catch (error) {
     return { error: "Error during request: " + (error as Error).message };
   }

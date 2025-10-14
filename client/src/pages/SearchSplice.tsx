@@ -1,9 +1,22 @@
+import type { Categories } from "@/types/genresResponse";
 import { AudioLines, Download, PlayCircle, StopCircle } from "lucide-react";
-import { postSearchRequest } from "../services/searchRequest";
+import { postGenresRequest, postSearchRequest } from "../services/searchRequest";
 import type { Data, Item } from "../types/searhResponse";
 import { useState, useRef, useEffect } from "react";
 import { decodeSpliceAudio } from "../utils/decoder";
 import axios from "axios";
+import { Card, CardContent } from "@/components/ui/card";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 function SearchSpliceSample() {
   // Formatea duración en ms a mm:ss
@@ -23,7 +36,21 @@ function SearchSpliceSample() {
   const [audioLoading, setAudioLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [categories, setCategories] = useState<Categories | null>(null);
+
   useEffect(() => {
+    // Fetch genres on component mount
+    postGenresRequest()
+      .then(res => {
+        if (res && (res as Categories).categories) {
+          setCategories((res as Categories));
+        }
+      })
+      .catch(error => console.error("Error fetching genres:", error));
+  }, [])
+
+  useEffect(() => {
+
     return () => {
       // Cleanup audio on unmount
       if (audioRef.current) {
@@ -33,7 +60,8 @@ function SearchSpliceSample() {
     };
   }, []);
 
-  const handleClick = () => {
+  const handleClick = (ev: React.FormEvent<HTMLFormElement>) => {
+    ev.preventDefault();
     setLoading(true);
     setError(null);
     postSearchRequest(searchQuery)
@@ -146,36 +174,77 @@ function SearchSpliceSample() {
   }
 
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-4">Splice Sample Search</h1>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search..."
-        className="px-3 py-2 rounded bg-gray-800 border border-gray-700 mb-2"
-      />
-      <button
-        onClick={handleClick}
-        className="ml-2 px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
-        disabled={loading}
-      >
-        {loading ? "Searching..." : "Create Search Request"}
-      </button>
-      {error && <div className="mt-4 text-red-400">{error}</div>}
-      <div className="mt-6">
+    <Card className="px-12 py-6 my-6">
 
-        <ul className="grid p-3 rounded bg-gray-800 border border-gray-700 grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4 items-center font-bold text-gray-400 mb-1 text-ce">
-          <li className="col-span-2">audio</li>
-          <li className="col-span-4">name</li>
-          <li className="col-span-2">progress</li>
-          <li className="col-span-2">time</li>
-          <li className="col-span-2">key</li>
-        </ul>
+      <CardContent className="mb-6">
+        <form onSubmit={handleClick} className="flex gap-2">
+          <Label>
+            Search Sample:
+          </Label>
+          <Input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="MVP... Rap... Guitar... Piano..."
+            className="w-[26rem]"
+          />
+
+          <Button
+            disabled={loading}
+            type="submit"
+          >
+            {loading ? "Searching..." : "Search"}
+          </Button>
+        </form>
+      </CardContent>
+
+      <CardContent className="mb-6">
+        {categories ? (
+          <Accordion type="single" collapsible>
+            {
+              categories.categories.map(c => (
+                <AccordionItem key={c.uuid} value={c.uuid}>
+                  <AccordionTrigger>{c.name}</AccordionTrigger>
+                  <AccordionContent>
+                    {c.description}
+                    <ul className="flex flex-wrap gap-2 mt-2">
+                      {c.subcategories.map(sub => (
+                        // <li key={sub.uuid}>{sub.name}</li>
+                        <Badge
+                          key={sub.uuid}
+                          variant="default"
+                          className="cursor-pointer hover:bg-blue-300"
+                        >
+                          {sub.name}
+                        </Badge>
+                      ))}
+                    </ul>
+
+
+                  </AccordionContent>
+                </AccordionItem>
+              ))
+            }
+          </Accordion>
+        ) : (
+          <p>No categories found.</p>
+        )}
+      </CardContent>
+
+      <CardContent className="mb-6">
+
+
 
         {items.length > 0 ? (
           <>
             <ul className="space-y-2 ">
+              <ul className="grid p-3 rounded bg-gray-800 border border-gray-700 grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4 items-center font-bold text-gray-400 mb-1 text-ce">
+                <li className="col-span-2">audio</li>
+                <li className="col-span-4">name</li>
+                <li className="col-span-2">progress</li>
+                <li className="col-span-2">time</li>
+                <li className="col-span-2">key</li>
+              </ul>
               {items.map(sample => (
                 <li key={sample.uuid} className="grid p-3 rounded bg-gray-800 border border-gray-700 grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4 items-center">
 
@@ -253,8 +322,8 @@ function SearchSpliceSample() {
         ) : (
           <div className="text-gray-400">No results yet.</div>
         )}
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 }
 
