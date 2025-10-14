@@ -12,6 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar"
+import { Link } from "react-router"
 
 export function NavMain({ items }: {
   items: {
@@ -34,12 +35,14 @@ export function NavMain({ items }: {
           >
             <SidebarMenuItem>
               {/** Submenu items */}
-              <CollapsibleTrigger asChild className="cursor-pointer">
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
+              <Link to={item.url} >
+                <CollapsibleTrigger asChild className="cursor-pointer">
+                  <SidebarMenuButton tooltip={item.title}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </CollapsibleTrigger>
+              </Link>
               <CollapsibleContent>
               </CollapsibleContent>
             </SidebarMenuItem>

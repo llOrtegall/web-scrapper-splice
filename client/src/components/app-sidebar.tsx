@@ -25,13 +25,13 @@ const data = {
   navMain: [
     {
       title: "Splice Search Samples",
-      url: "#",
+      url: "/",
       icon: SquareTerminal,
       isActive: true
     },
     {
       title: "Downloader Splice Samples",
-      url: "#",
+      url: "/downloader",
       icon: Bot
     }
   ]
@@ -47,7 +47,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
