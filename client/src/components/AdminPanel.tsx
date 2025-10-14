@@ -1,12 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import { Trash2, UserCheck, UserX, Users, Activity, Database, Plus, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { useState, useEffect, useCallback } from 'react';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { Separator } from './ui/separator';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Avatar, AvatarFallback } from './ui/avatar';
-import { Separator } from './ui/separator';
-import { Trash2, UserCheck, UserX, Users, Activity, Database, Plus, X } from 'lucide-react';
+import axios from 'axios';
 
 interface User {
   id: number;

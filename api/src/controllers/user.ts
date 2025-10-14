@@ -1,8 +1,9 @@
-import { ENV, JWT_SECRECT, ROUNDS_SALT } from '../schemas/env.js'
+import { COOKIE_NAME, ENV, JWT_SECRECT, ROUNDS_SALT } from '../schemas/env.js'
 import { Request, Response } from "express";
 import { User } from "../models/user.m.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { extractCookieValue } from 'src/utils/token.js';
 
 export const registerNewUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -112,7 +113,7 @@ export const updateUserNameOrState = async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Failed to update user' });
     });
 }
-  
+
 export const deleteUser = async (req: Request, res: Response) => {
   const { username } = req.body;
   const userReq = req.user;
@@ -206,26 +207,24 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 export const UserByToken = async (req: Request, res: Response) => {
+  const cookieHeader = req.headers.cookie;
+
+  // Verificar que exista el header de cookies
+  if (!cookieHeader) {
+    res.status(401).json({
+      message: 'Unauthorized: No authentication cookie found'
+    });
+    return;
+  }
+
   try {
-    const cookie = req.headers.cookie
-
-    if (!cookie) {
-      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
-      return;
-    }
-
-    //agarrar el token que tiene de nombre splice-token-winkermind
-    const token = cookie.split(';').find(c => c.trim().startsWith('splice-token-winkermind='));
-
-    if (!token) {
-      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
-      return;
-    }
-
-    const tokenValue = token.split('=')[1];
+    const tokenValue = extractCookieValue(cookieHeader, COOKIE_NAME);
 
     if (!tokenValue) {
-      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+      res.status(401).json({
+        message: 'Unauthorized: Authentication token not found',
+        hint: `Expected cookie: ${COOKIE_NAME}`
+      });
       return;
     }
 
@@ -247,7 +246,7 @@ export const UserByToken = async (req: Request, res: Response) => {
 
 export const logoutUser = async (req: Request, res: Response) => {
   try {
-    res.clearCookie('token');
+    res.clearCookie(COOKIE_NAME);
     res.status(200).json({ message: 'User logged out successfully' });
   } catch (err) {
     console.error('Error logging out user:', err);

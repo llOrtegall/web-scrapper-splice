@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { en } from "zod/v4/locales";
+const AUTH_COOKIE_NAME = 'splice-token-winkermind';
 
 export const envSchema = z.object({
     JWT_SECRECT: z.string().min(1),
@@ -10,6 +10,8 @@ export const envSchema = z.object({
     DB_USER: z.string().min(1),
     DB_PASSWORD: z.string().min(1),
     DB_NAME: z.string().min(1),
+    COOKIE_NAME: z.string().default(AUTH_COOKIE_NAME)
+
 })
 
 const { success, data, error } = envSchema.safeParse(process.env)
@@ -27,7 +29,8 @@ export const {
     DB_PORT, 
     DB_USER, 
     JWT_SECRECT, 
-    ROUNDS_SALT
+    ROUNDS_SALT,
+    COOKIE_NAME
 } = data
 
     

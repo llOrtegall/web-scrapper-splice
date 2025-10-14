@@ -1,13 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
+import { extractCookieValue } from '../utils/token.js';
+import { COOKIE_NAME } from '../schemas/env.js';
 import { JWT_SECRECT } from '../schemas/env.js';
 import jwt from 'jsonwebtoken';
-
+/**
+ * Payload del token JWT con información del usuario
+ */
 interface UserPayLoad extends jwt.JwtPayload {
-  id: string,
-  username: string,
-  role: string,
-  iat: number,
-  exp: number
+  id: string;
+  username: string;
+  role: string;
+  iat: number;
+  exp: number;
 }
 
 declare global {
@@ -18,46 +22,50 @@ declare global {
   }
 }
 
-export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-  const cookie = req.headers.cookie
+/**
+ * Middleware de autenticación que verifica el token JWT en las cookies
+ * Busca específicamente la cookie 'splice-token-winkermind' para evitar conflictos
+ * con otras cookies externas del frontend
+ */
+export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
+  const cookieHeader = req.headers.cookie;
 
-  if (!cookie) {
-    res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+  // Verificar que exista el header de cookies
+  if (!cookieHeader) {
+    res.status(401).json({ 
+      message: 'Unauthorized: No authentication cookie found' 
+    });
     return;
   }
 
-  //agarrar el token que tiene de nombre splice-token-winkermind
-  const token = cookie.split(';').find(c => c.trim().startsWith('splice-token-winkermind='));
-
-  if (!token) {
-    res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
-    return;
-  }
-
-  const tokenValue = token.split('=')[1];
+  // Extraer el token específico de las cookies
+  const tokenValue = extractCookieValue(cookieHeader, COOKIE_NAME);
 
   if (!tokenValue) {
-    res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+    res.status(401).json({ 
+      message: 'Unauthorized: Authentication token not found',
+      hint: `Expected cookie: ${COOKIE_NAME}`
+    });
     return;
   }
 
+  // Verificar y decodificar el token
   try {
-
-    jwt.verify(tokenValue, JWT_SECRECT, (err, decoded) => {
-      if (err) {
-        res.status(401).json({ message: 'Unauthorized: Invalid token' });
-        return;
-      }
-
-      req.user = decoded as UserPayLoad;
-      next();
-    });
-
+    const decoded = jwt.verify(tokenValue, JWT_SECRECT) as UserPayLoad;
+    req.user = decoded;
+    next();
   } catch (err) {
     if (err instanceof jwt.TokenExpiredError) {
       res.status(401).json({ message: 'Token expired' });
-      return
+      return;
     }
-    res.status(401).json({ message: 'Unauthorized: Invalid token' });
+    
+    if (err instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({ message: 'Invalid token' });
+      return;
+    }
+
+    // Error inesperado
+    res.status(500).json({ message: 'Authentication error' });
   }
 };
