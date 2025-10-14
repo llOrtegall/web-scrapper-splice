@@ -4,6 +4,7 @@ import { dowloadRouter} from './routes/dowload.js';
 import { routerUsers } from './routes/user.r.js';
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import morgan from 'morgan';
 import cors from 'cors';
 
 const PORT = process.env.PORT || 4000;
@@ -13,6 +14,7 @@ app.use(cors({
   origin: process.env.ORIGIN || 'http://localhost:5173',
   credentials: true
 }));
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

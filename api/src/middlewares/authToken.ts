@@ -26,15 +26,24 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     return;
   }
 
+  //agarrar el token que tiene de nombre splice-token-winkermind
+  const token = cookie.split(';').find(c => c.trim().startsWith('splice-token-winkermind='));
+
+  if (!token) {
+    res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+    return;
+  }
+
+  const tokenValue = token.split('=')[1];
+
+  if (!tokenValue) {
+    res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
+    return;
+  }
+
   try {
-    const token = cookie.split('=')[1]
 
-    if (!token) {
-      res.status(401).json({ message: 'Unauthorized: Missing or invalid token' });
-      return;
-    }
-
-    jwt.verify(token, JWT_SECRECT, (err, decoded) => {
+    jwt.verify(tokenValue, JWT_SECRECT, (err, decoded) => {
       if (err) {
         res.status(401).json({ message: 'Unauthorized: Invalid token' });
         return;
