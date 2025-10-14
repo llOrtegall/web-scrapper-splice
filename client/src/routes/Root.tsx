@@ -1,13 +1,14 @@
 import { useAuth } from '../context/auth/AuthContext';
 import { Outlet } from 'react-router';
+import { lazy } from 'react';
 
-import LoginForm from '../components/LoginForm';
+const LoginPage = lazy(() => import('@/pages/Login'));
 
 function Root() {
   const { user } = useAuth();
 
   if (!user) {
-    return <LoginForm />
+    return <LoginPage />
   }
 
   return <Outlet />
