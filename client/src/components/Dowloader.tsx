@@ -18,9 +18,6 @@ function DownloaderSample() {
   const [loading, setLoading] = useState(false);
   const { user, logout } = useAuth();
 
-  console.log(user);
-
-  // Polling optimizado para verificar el estado de la descarga
   useEffect(() => {
     if (!downloadId) return;
 
