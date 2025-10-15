@@ -2,7 +2,7 @@ import { Download, PlayCircle, StopCircle, Music, Clock, Activity } from "lucide
 import { useEffect, useRef, useState } from "react";
 import { decodeSpliceAudio } from "@/utils/decoder";
 import type { Item } from "../types/searhResponse";
-import { Card, CardContent } from "./ui/card";
+import { Card } from "./ui/card";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import axios from "axios";
@@ -130,121 +130,125 @@ export function CardSample({ items }: { items: Item[] }) {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-3">
       {items.map(sample => (
-        <Card 
-          key={sample.uuid} 
+        <Card
+          key={sample.uuid}
           className="group overflow-hidden transition-all hover:shadow-lg hover:border-primary/50"
         >
-          {/* Image Header */}
-          <div className="relative aspect-square overflow-hidden bg-muted">
-            <img 
-              src={extractImageUrl(sample)} 
-              alt={sample.name} 
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" 
-              loading="lazy" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            
-            {/* Play/Stop Button Overlay */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Button
-                onClick={() => handlePlayClick(sample)}
-                size="icon"
-                className="h-16 w-16 rounded-full shadow-2xl"
-                variant={playingId === sample.uuid ? "destructive" : "default"}
-                disabled={audioLoading && playingId === sample.uuid}
-              >
-                {playingId === sample.uuid ? (
-                  <StopCircle className="h-8 w-8" />
-                ) : (
-                  <PlayCircle className="h-8 w-8" />
-                )}
-              </Button>
+          <div className="flex gap-4 p-4">
+            {/* Image Thumbnail */}
+            <div className="relative w-32 h-32 flex-shrink-0 overflow-hidden bg-muted rounded-md flex items-center justify-center">
+              <img
+                src={extractImageUrl(sample)}
+                alt={sample.name}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              {/* Play/Stop Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  onClick={() => handlePlayClick(sample)}
+                  size="icon"
+                  className="h-12 w-12 rounded-full shadow-2xl"
+                  variant={playingId === sample.uuid ? "destructive" : "default"}
+                  disabled={audioLoading && playingId === sample.uuid}
+                >
+                  {playingId === sample.uuid ? (
+                    <StopCircle className="h-6 w-6" />
+                  ) : (
+                    <PlayCircle className="h-6 w-6" />
+                  )}
+                </Button>
+              </div>
+
+              {/* Loading Indicator */}
+              {audioLoading && playingId === sample.uuid && (
+                <div className="absolute top-2 right-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                </div>
+              )}
             </div>
 
-            {/* Loading Indicator */}
-            {audioLoading && playingId === sample.uuid && (
-              <div className="absolute top-2 right-2">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            {/* Content */}
+            <div className="flex-1 flex flex-col justify-between min-w-0">
+              <div className="space-y-2">
+                {/* Title */}
+                <div className="space-y-1">
+                  <h3 
+                    className="font-semibold text-base truncate group-hover:text-primary transition-colors" 
+                    title={sample.name.split("/").pop()}>
+                    {sample.name.split("/").pop()}
+                  </h3>
+                  {sample.parents?.items?.[0]?.name && (
+                    <p className="text-sm text-muted-foreground truncate" title={sample.parents.items[0].name}>
+                      {sample.parents.items[0].name}
+                    </p>
+                  )}
+                </div>
+
+                {/* Metadata Badges */}
+                <div className="flex flex-wrap gap-2">
+                  {sample.bpm && (
+                    <Badge variant="secondary" className="gap-1">
+                      <Activity className="h-3 w-3" />
+                      {sample.bpm} BPM
+                    </Badge>
+                  )}
+                  {sample.key && (
+                    <Badge variant="secondary" className="gap-1">
+                      <Music className="h-3 w-3" />
+                      {sample.key}
+                    </Badge>
+                  )}
+                  {sample.duration && (
+                    <Badge variant="secondary" className="gap-1">
+                      <Clock className="h-3 w-3" />
+                      {formatDuration(sample.duration)}
+                    </Badge>
+                  )}
+                  {sample.asset_category_slug && (
+                    <Badge variant="outline" className="capitalize text-xs">
+                      {sample.asset_category_slug.replace(/_/g, ' ')}
+                    </Badge>
+                  )}
+                </div>
               </div>
-            )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-2 mt-3">
+                <Button
+                  onClick={() => handlePlayClick(sample)}
+                  variant={playingId === sample.uuid ? "destructive" : "default"}
+                  size="sm"
+                  className="flex-1"
+                  disabled={audioLoading && playingId === sample.uuid}
+                >
+                  {playingId === sample.uuid ? (
+                    <>
+                      <StopCircle className="h-4 w-4" />
+                      Stop
+                    </>
+                  ) : (
+                    <>
+                      <PlayCircle className="h-4 w-4" />
+                      Play
+                    </>
+                  )}
+                </Button>
+                <Button
+                  onClick={() => handleDownload(sample)}
+                  variant="outline"
+                  size="sm"
+                  title="Download sample"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
-
-          {/* Content */}
-          <CardContent className="p-4 space-y-3">
-            {/* Title */}
-            <div className="space-y-1">
-              <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-primary transition-colors" title={sample.name.split("/").pop()}>
-                {sample.name.split("/").pop()}
-              </h3>
-              {sample.parents?.items?.[0]?.name && (
-                <p className="text-xs text-muted-foreground line-clamp-1">
-                  {sample.parents.items[0].name}
-                </p>
-              )}
-            </div>
-
-            {/* Metadata Badges */}
-            <div className="flex flex-wrap gap-2">
-              {sample.bpm && (
-                <Badge variant="secondary" className="gap-1">
-                  <Activity className="h-3 w-3" />
-                  {sample.bpm} BPM
-                </Badge>
-              )}
-              {sample.key && (
-                <Badge variant="secondary" className="gap-1">
-                  <Music className="h-3 w-3" />
-                  {sample.key}
-                </Badge>
-              )}
-              {sample.duration && (
-                <Badge variant="secondary" className="gap-1">
-                  <Clock className="h-3 w-3" />
-                  {formatDuration(sample.duration)}
-                </Badge>
-              )}
-            </div>
-
-            {/* Category */}
-            {sample.asset_category_slug && (
-              <div className="text-xs text-muted-foreground capitalize">
-                {sample.asset_category_slug.replace(/_/g, ' ')}
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex gap-2 pt-2">
-              <Button
-                onClick={() => handlePlayClick(sample)}
-                variant={playingId === sample.uuid ? "destructive" : "default"}
-                size="sm"
-                className="flex-1"
-                disabled={audioLoading && playingId === sample.uuid}
-              >
-                {playingId === sample.uuid ? (
-                  <>
-                    <StopCircle className="h-4 w-4" />
-                    Stop
-                  </>
-                ) : (
-                  <>
-                    <PlayCircle className="h-4 w-4" />
-                    Play
-                  </>
-                )}
-              </Button>
-              <Button
-                onClick={() => handleDownload(sample)}
-                variant="outline"
-                size="sm"
-                title="Download sample"
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
-          </CardContent>
         </Card>
       ))}
     </div>
