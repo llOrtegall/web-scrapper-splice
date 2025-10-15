@@ -1,9 +1,11 @@
-import { AudioLines, Download, PlayCircle, StopCircle } from "lucide-react";
+import { Download, PlayCircle, StopCircle, Music, Clock, Activity } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { decodeSpliceAudio } from "@/utils/decoder";
 import type { Item } from "../types/searhResponse";
-import axios from "axios";
 import { Card, CardContent } from "./ui/card";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import axios from "axios";
 
 export function CardSample({ items }: { items: Item[] }) {
   const [playingId, setPlayingId] = useState<string | null>(null);
@@ -128,53 +130,123 @@ export function CardSample({ items }: { items: Item[] }) {
   }
 
   return (
-    <ul className="space-y-2">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {items.map(sample => (
-        <Card key={sample.uuid}>
-
-          <CardContent className="flex items-center gap-2">
-            <figure>
-              <img src={extractImageUrl(sample)} alt={sample.name} className="rounded-sm" width={68} height={68} loading="lazy" />
-            </figure>
-
-            <button
-              onClick={() => handlePlayClick(sample)}
-              className={`bg-gray-800 p-2 rounded-md hover:bg-gray-700 cursor-pointer flex items-center justify-center relative`}
-              disabled={audioLoading && playingId === sample.uuid}
-              title={playingId === sample.uuid ? "Stop" : "Play"}
-            >
-              {playingId === sample.uuid ? (
-                <StopCircle className="text-red-500" />
-              ) : (
-                <PlayCircle className="text-green-600" />
-              )}
-              {audioLoading && playingId === sample.uuid && (
-                <span className="absolute right-0 top-0 text-xs text-blue-300 animate-pulse">Loading...</span>
-              )}
-            </button>
-
-            <button
-              onClick={() => handleDownload(sample)}
-              className="bg-gray-800 p-2 rounded-md hover:bg-gray-700 cursor-pointer flex items-center"
-              title="Download sample"
-            >
-              <Download className="text-gray-300" />
-            </button>
-
-          </CardContent>
-
-          <CardContent className="flex items-center gap-2">
-            <div title={sample.name.split("/").pop()} >
-              {sample.name.split("/").pop()}
+        <Card 
+          key={sample.uuid} 
+          className="group overflow-hidden transition-all hover:shadow-lg hover:border-primary/50"
+        >
+          {/* Image Header */}
+          <div className="relative aspect-square overflow-hidden bg-muted">
+            <img 
+              src={extractImageUrl(sample)} 
+              alt={sample.name} 
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" 
+              loading="lazy" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            
+            {/* Play/Stop Button Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                onClick={() => handlePlayClick(sample)}
+                size="icon"
+                className="h-16 w-16 rounded-full shadow-2xl"
+                variant={playingId === sample.uuid ? "destructive" : "default"}
+                disabled={audioLoading && playingId === sample.uuid}
+              >
+                {playingId === sample.uuid ? (
+                  <StopCircle className="h-8 w-8" />
+                ) : (
+                  <PlayCircle className="h-8 w-8" />
+                )}
+              </Button>
             </div>
-            <div>
-              <span>BPM: {sample.bpm ?? "---"}</span>
-              <span>Type: {sample.asset_category_slug ?? "-"}</span>
+
+            {/* Loading Indicator */}
+            {audioLoading && playingId === sample.uuid && (
+              <div className="absolute top-2 right-2">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              </div>
+            )}
+          </div>
+
+          {/* Content */}
+          <CardContent className="p-4 space-y-3">
+            {/* Title */}
+            <div className="space-y-1">
+              <h3 className="font-semibold text-sm line-clamp-1 group-hover:text-primary transition-colors" title={sample.name.split("/").pop()}>
+                {sample.name.split("/").pop()}
+              </h3>
+              {sample.parents?.items?.[0]?.name && (
+                <p className="text-xs text-muted-foreground line-clamp-1">
+                  {sample.parents.items[0].name}
+                </p>
+              )}
             </div>
-            <div>Time: {formatDuration(sample.duration)}</div>
+
+            {/* Metadata Badges */}
+            <div className="flex flex-wrap gap-2">
+              {sample.bpm && (
+                <Badge variant="secondary" className="gap-1">
+                  <Activity className="h-3 w-3" />
+                  {sample.bpm} BPM
+                </Badge>
+              )}
+              {sample.key && (
+                <Badge variant="secondary" className="gap-1">
+                  <Music className="h-3 w-3" />
+                  {sample.key}
+                </Badge>
+              )}
+              {sample.duration && (
+                <Badge variant="secondary" className="gap-1">
+                  <Clock className="h-3 w-3" />
+                  {formatDuration(sample.duration)}
+                </Badge>
+              )}
+            </div>
+
+            {/* Category */}
+            {sample.asset_category_slug && (
+              <div className="text-xs text-muted-foreground capitalize">
+                {sample.asset_category_slug.replace(/_/g, ' ')}
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-2">
+              <Button
+                onClick={() => handlePlayClick(sample)}
+                variant={playingId === sample.uuid ? "destructive" : "default"}
+                size="sm"
+                className="flex-1"
+                disabled={audioLoading && playingId === sample.uuid}
+              >
+                {playingId === sample.uuid ? (
+                  <>
+                    <StopCircle className="h-4 w-4" />
+                    Stop
+                  </>
+                ) : (
+                  <>
+                    <PlayCircle className="h-4 w-4" />
+                    Play
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={() => handleDownload(sample)}
+                variant="outline"
+                size="sm"
+                title="Download sample"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ))}
-    </ul>
+    </div>
   )
 }
