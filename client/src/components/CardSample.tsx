@@ -223,7 +223,7 @@ export function CardSample({ items }: { items: Item[] }) {
                   onClick={() => handlePlayClick(sample)}
                   variant={playingId === sample.uuid ? "destructive" : "default"}
                   size="sm"
-                  className="flex-1"
+                  className="w-24"
                   disabled={audioLoading && playingId === sample.uuid}
                 >
                   {playingId === sample.uuid ? (
