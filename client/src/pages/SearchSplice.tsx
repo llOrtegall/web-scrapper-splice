@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { postGenresRequest, postSearchRequest } from "../services/searchRequest";
 import type { Data, Item } from "../types/searhResponse";
 import type { Categories } from "@/types/genresResponse";
@@ -32,6 +32,9 @@ function SearchSpliceSample() {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Categories | null>(null);
 
+  const [pag, setPag] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
   useEffect(() => {
     // Fetch genres on component mount
     postGenresRequest()
@@ -51,10 +54,24 @@ function SearchSpliceSample() {
       .then(res => {
         if (res && (res as Data).assetsSearch) {
           setItems((res as Data).assetsSearch.items);
+          setPag((res as Data).assetsSearch.pagination_metadata.currentPage);
+          setTotalPages((res as Data).assetsSearch.pagination_metadata.totalPages);
         }
       })
       .catch(error => setError(error))
       .finally(() => setLoading(false));
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPag(newPage);
+    postSearchRequest(searchQuery, newPage)
+      .then(res => {
+        if (res && (res as Data).assetsSearch) {
+          setItems((res as Data).assetsSearch.items);
+          setTotalPages((res as Data).assetsSearch.pagination_metadata.totalPages);
+        }
+      })
+      .catch(error => setError(error));
   };
 
   return (
@@ -136,17 +153,28 @@ function SearchSpliceSample() {
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious href="#" />
+            <PaginationPrevious />
           </PaginationItem>
           <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
+            <PaginationLink >1</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink isActive>
+              2
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink >3</PaginationLink>
           </PaginationItem>
           <PaginationItem>
             <PaginationEllipsis />
           </PaginationItem>
           <PaginationItem>
-            <PaginationNext href="#" />
+            <PaginationNext />
           </PaginationItem>
+          <span className="flex-1 font-semibold" >
+            Total: {"["} {totalPages} {"]"}
+          </span>
         </PaginationContent>
       </Pagination>
 
