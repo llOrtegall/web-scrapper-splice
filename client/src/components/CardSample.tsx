@@ -133,7 +133,7 @@ export function CardSample({ items }: { items: Item[] }) {
       {items.map(sample => (
         <section
           key={sample.uuid}
-          className="group overflow-hidden transition-all border-b"
+          className="group overflow-hidden transition-all border-b flex"
         >
           <div className="flex gap-4 p-4">
             {/* Image Thumbnail */}
@@ -150,7 +150,7 @@ export function CardSample({ items }: { items: Item[] }) {
           </div>
 
           {/* Content */}
-          <div className="grid gap-4 grid-cols-12">
+          <div className="flex-1 grid gap-4 grid-cols-12">
 
             {/* Action Buttons */}
             <div className="flex gap-2 items-center col-span-2">
@@ -184,7 +184,7 @@ export function CardSample({ items }: { items: Item[] }) {
             </div>
 
             {/* Title */}
-            <div className="flex flex-col justify-center col-span-8">
+            <div className="flex flex-col justify-center col-span-6">
               <h3
                 className="font-semibold text-base truncate group-hover:text-primary transition-colors"
                 title={sample.name.split("/").pop()}>
@@ -198,7 +198,7 @@ export function CardSample({ items }: { items: Item[] }) {
             </div>
 
             {/* Metadata Badges */}
-            <div className="col-span-2 flex items-center gap-1">
+            <div className="col-span-2 flex items-center gap-2">
               {sample.bpm && (
                 <Badge variant="secondary" className="gap-1">
                   <Activity className="h-3 w-3" />
