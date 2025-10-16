@@ -180,7 +180,7 @@ export const loginUser = async (req: Request, res: Response) => {
         role: user.role,
       }
 
-      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '4h' }, (err, token) => {
+      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '24h' }, (err, token) => {
         if (err) {
           console.log(err.message);
           res.status(401).json({ message: err.message })
