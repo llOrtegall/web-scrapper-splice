@@ -74,7 +74,7 @@ function SearchSpliceSample() {
             {loading ? "Searching..." : "Search"}
           </Button>
         </form>
-        <ScrollArea className="h-[80vh] w-full ">
+        <ScrollArea className="h-[80vh] w-full">
           <CardContent className="mb-6">
             {
               items !== undefined && items.length > 0
