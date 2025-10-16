@@ -1,12 +1,15 @@
-import { AudioLines, Download, PlayCircle, StopCircle } from "lucide-react";
-import type { Item } from "../types/searhResponse";
+import { Download, PlayCircle, StopCircle, Music, Clock, Activity } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import { decodeSpliceAudio } from "@/utils/decoder";
+import type { Item } from "../types/searhResponse";
+import { Spinner } from "./ui/spinner";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import axios from "axios";
 
 export function CardSample({ items }: { items: Item[] }) {
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [audioLoading, setAudioLoading] = useState(false);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   function extractImageUrl(sample: Item): string {
@@ -55,11 +58,11 @@ export function CardSample({ items }: { items: Item[] }) {
         audioRef.current.src = "";
       }
       setPlayingId(null);
-      setAudioLoading(false);
+      setLoadingId(null);
       return;
     }
 
-    setAudioLoading(true);
+    setLoadingId(sample.uuid);
     try {
       // Detener cualquier audio anterior
       if (audioRef.current) {
@@ -81,15 +84,15 @@ export function CardSample({ items }: { items: Item[] }) {
       const audio = new window.Audio(blobUrl);
       audioRef.current = audio;
       audio.onended = () => setPlayingId(null);
-      audio.oncanplay = () => setAudioLoading(false);
+      audio.oncanplay = () => setLoadingId(null);
       audio.onerror = () => {
-        setAudioLoading(false);
+        setLoadingId(null);
         setPlayingId(null);
       };
       setPlayingId(sample.uuid);
       await audio.play();
     } catch (error) {
-      setAudioLoading(false);
+      setLoadingId(null);
       setPlayingId(null);
       console.error("Error reproduciendo audio:", error);
     }
@@ -127,79 +130,109 @@ export function CardSample({ items }: { items: Item[] }) {
   }
 
   return (
-    <ul className="space-y-2">
+    <>
       {items.map(sample => (
-        <li key={sample.uuid} className="grid p-3 rounded bg-gray-800 border border-gray-700 grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4 items-center">
+        <section
+          key={sample.uuid}
+          className="group overflow-hidden transition-all border-b flex"
+        >
+          <div className="flex gap-4 p-4">
+            {/* Image Thumbnail */}
+            <div className="relative w-12 h-12 flex-shrink-0 overflow-hidden bg-muted rounded-md flex items-center justify-center">
+              <img
+                src={extractImageUrl(sample)}
+                alt={sample.name}
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-          <figure className="flex items-center justify-around gap-2 col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2">
-            <img src={extractImageUrl(sample)} alt={sample.name} className="rounded-sm" width={68} height={68} loading="lazy" />
-
-            <button className="p-1 rounded bg-gray-700">
-              <AudioLines className="w-8 h-8 text-blue-200" />
-            </button>
-
-            <button
-              onClick={() => handlePlayClick(sample)}
-              className={`p-1 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer flex items-center justify-center relative`}
-              disabled={audioLoading && playingId === sample.uuid}
-              title={playingId === sample.uuid ? "Stop" : "Play"}
-            >
-              {playingId === sample.uuid ? (
-                <StopCircle className="w-8 h-8 text-red-400" />
-              ) : (
-                <PlayCircle className="w-8 h-8 text-yellow-300" />
-              )}
-              {audioLoading && playingId === sample.uuid && (
-                <span className="absolute right-0 top-0 text-xs text-blue-300 animate-pulse">Loading...</span>
-              )}
-            </button>
-
-            <button
-              onClick={() => handleDownload(sample)}
-              className="p-1 rounded bg-gray-700 hover:bg-gray-600 cursor-pointer"
-              title="Download sample"
-            >
-              <Download className="w-8 h-8 text-green-300" />
-            </button>
-
-          </figure>
-
-          <section className="flex flex-col justify-center col-span-1 sm:col-span-2 md:col-span-4 lg:col-span-4">
-            <div
-              className="font-bold text-blue-300 truncate max-w-[180px] md:max-w-[320px] lg:max-w-[480px]"
-              title={sample.name.split("/").pop()}
-            >
-              {sample.name.split("/").pop()}
             </div>
-            <div className="flex items-center space-x-2">
-              <span>BPM: {sample.bpm ?? "---"}</span>
-              <span className="ml-4">Type: {sample.asset_category_slug ?? "-"}</span>
-            </div>
-          </section>
-
-          <div className="flex items-center col-span-1 sm:col-span-1 md:col-span-2 lg:col-span-2">
-            <canvas
-              width={250}
-              height={30}
-              className="bg-gray-700 rounded shadow-inner border border-gray-600"
-              style={{
-                display: "block",
-                boxSizing: "border-box",
-                outline: "none",
-                transition: "box-shadow 0.2s",
-              }}
-            ></canvas>
           </div>
 
-          <section className="flex flex-col justify-center ml-auto text-right col-span-1">
-            <div>Time: {formatDuration(sample.duration)}</div>
-          </section>
+          {/* Content */}
+          <div className="flex-1 grid gap-4 grid-cols-12">
 
-          <section className="flex flex-col justify-center ml-auto text-right col-span-1">
-            <div>Key: {sample.key ?? "-"}</div>
-          </section>
-        </li>
+            {/* Action Buttons */}
+            <div className="flex gap-2 items-center col-span-2">
+              <Button
+                onClick={() => handlePlayClick(sample)}
+                variant={playingId === sample.uuid ? "destructive" : "default"}
+                size="sm"
+                className="w-24"
+                disabled={loadingId === sample.uuid}
+              >
+                {loadingId === sample.uuid ? (
+                  <>
+                    <Spinner />
+                    Loading...
+                  </>
+                ) : playingId === sample.uuid ? (
+                  <>
+                    <StopCircle className="h-4 w-4" />
+                    Stop
+                  </>
+                ) : (
+                  <>
+                    <PlayCircle className="h-4 w-4" />
+                    Play
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={() => handleDownload(sample)}
+                variant="outline"
+                size="sm"
+                title="Download sample"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Title */}
+            <div className="flex flex-col justify-center col-span-6">
+              <h3
+                className="font-semibold text-base truncate group-hover:text-primary transition-colors"
+                title={sample.name.split("/").pop()}>
+                {sample.name.split("/").pop()}
+              </h3>
+              {sample.parents?.items?.[0]?.name && (
+                <p className="text-sm text-muted-foreground truncate" title={sample.parents.items[0].name}>
+                  {sample.parents.items[0].name}
+                </p>
+              )}
+            </div>
+
+            {/* Metadata Badges */}
+            <div className="col-span-2 flex items-center gap-2">
+              {sample.bpm && (
+                <Badge variant="secondary" className="gap-1">
+                  <Activity className="h-3 w-3" />
+                  {sample.bpm} BPM
+                </Badge>
+              )}
+              {sample.key && (
+                <Badge variant="secondary" className="gap-1">
+                  <Music className="h-3 w-3" />
+                  {sample.key}
+                </Badge>
+              )}
+              {sample.duration && (
+                <Badge variant="secondary" className="gap-1">
+                  <Clock className="h-3 w-3" />
+                  {formatDuration(sample.duration)}
+                </Badge>
+              )}
+              {sample.asset_category_slug && (
+                <Badge variant="outline" className="capitalize text-xs">
+                  {sample.asset_category_slug.replace(/_/g, ' ')}
+                </Badge>
+              )}
+            </div>
+
+          </div>
+        </section>
       ))}
-    </ul>
+    </>
   )
 }

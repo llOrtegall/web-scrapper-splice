@@ -1,0 +1,622 @@
+[
+    {
+        "asset_type_slug": "sample",
+        "asset_prices": [
+            {
+                "amount": 1,
+                "currency": "Credits",
+                "__typename": "Price"
+            }
+        ],
+        "uuid": "7fa4321edb9e88c104176c6521ba4293cc9f95c3a16e0b6af12e2bb8f2342deb",
+        "name": "Renraku_-_Astrosoul_-_RnB_and_Soul_Aesthetics_III_-_Audio/loops/guitar_loops/RKU_ARSA3_90_acoustic_guitar_loop_anicdote_C#min.wav",
+        "tags": [
+            {
+                "uuid": "60845712-1235-4d2d-a3ce-f68a4ca625df",
+                "label": "acoustic",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "bdda9fa9-e4eb-4ec5-9593-7885f9c8ddba",
+                "label": "guitar",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "bc2d49b8-790c-4778-9a2b-539e4d7d618a",
+                "label": "soul",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "3d8b3172-e93a-4fe0-aa3b-4d8c22026b23",
+                "label": "rnb",
+                "__typename": "Tag"
+            }
+        ],
+        "files": [
+            {
+                "uuid": "d991f514-328e-41b9-9161-a19f81369597",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/7fa4321edb9e88c104176c6521ba4293cc9f95c3a16e0b6af12e2bb8f2342deb-scrambled/7fa4321edb9e88c104176c6521ba4293cc9f95c3a16e0b6af12e2bb8f2342deb.mp3",
+                "asset_file_type_slug": "preview_mp3",
+                "url": "https://spliceproduction.s3.us-west-1.amazonaws.com/audio_samples/7fa4321edb9e88c104176c6521ba4293cc9f95c3a16e0b6af12e2bb8f2342deb-scrambled/7fa4321edb9e88c104176c6521ba4293cc9f95c3a16e0b6af12e2bb8f2342deb.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=ASIARXANDEUAY6PICTTF%2F20251015%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20251015T180307Z&X-Amz-Expires=21600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJIMEYCIQDkwbqfcFVpZ2blh6rg0GoMVzGyHQq9wUS221ttx7K90AIhAL8Vd25RTkuFTBWQZqSDrBnVUm%2BdOal9SIGZnZPzXhiKKusDCHkQABoMMTE4MTM5MDY5Njk3IgyMLysCp2LpKbBOkjkqyAPAy9kYpQrU51C3eE57XT%2FP6zQl%2BEgYZjNwYbRY3bVlIK%2Fau6nY7%2BM3UBaASH0jX92hZQ1%2B1AfxUH%2BSc3WYz9CEPzc%2BpN1vn0a6rXYdJTcBaKWwZyiFStqT%2FI3%2BZXb2KlHEDsCpuRSKmBN6SEpbX6DahbBd4Xq7AyO1k2xPxij8dZXiCz0xk6M95iePHbq1tgjzJ6O6j%2FZkf1PPJtYcG4wOS25SSzbRoc3t4BstWAhQlCWtyep5paT%2B5cpmO4iViZdAgvR7usYdQ7wmp0eofH0r3jZAeQfPn%2Bb4zZ21pW1BiyKKEwfdjL6zaWt2mM3ANe9v4LAkNryzEyqcotSbMAnmFO%2B8UEkxg00EMEUt8j2gKk%2BSrc%2Fywsiu0R1Ccyqva%2F5nITclcdu5if4Ba%2BYDpPYVGtj%2FDmKCZcfzd2rVlJ%2F%2BhzhBakcjC4MheOGX1X6j0pHoQDYOA7USNQuZq5q3dAyHjsSBzcZFN4%2BsUFEDLjKQU5AXaupu9kZgLedDaYKQ1OlB8FiMjHnazrWmAqwg1YBHGAR8V66nh%2FoxXz80WISgrzaRH92PpsiqX9lpz3vLuvqIBpZb%2BmON4rY661qz7asvj97quaqoiaUw8pG%2FxwY6pAFckJVrklTGvnggCnMBTJ3anZM97WQfnm%2BBQwNwLcH8SL23RZ8kx5wE50j3zfwz5w2Dnb%2B2yw25yWUA21lAArB8a6RFWMA1RJAO8FVdudHuFf5dCJ%2BxM%2Fd1YzURgwZcOmygrmPFHzX6V6uj7B65PAhgcqVPpEhNv1u2lkiBTwS4P1tL0QKjnzqe5icxOOBE7bBIRymw%2FNx%2Fu4BG7Gab8U5N8nb0PA%3D%3D&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=2916100a439cb3481f5455778c30d3adfd72ac5e54ef8093717115dabe30c105",
+                "__typename": "AssetFile"
+            },
+            {
+                "uuid": "4343d098-43b4-482d-9bb9-d495900c90e3",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/7fa4321edb9e88c104176c6521ba4293cc9f95c3a16e0b6af12e2bb8f2342deb.wv.json",
+                "asset_file_type_slug": "waveform",
+                "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/audio_samples/7fa4321edb9e88c104176c6521ba4293cc9f95c3a16e0b6af12e2bb8f2342deb.wv.json",
+                "__typename": "AssetFile"
+            }
+        ],
+        "__typename": "SampleAsset",
+        "parents": {
+            "items": [
+                {
+                    "permalink_slug": "astrosoul-rnb-and-soul-aesthetics-iii",
+                    "permalink_base_url": "renraku",
+                    "uuid": "f19cffb2-b3e2-4ef1-8915-f3ee414062b6",
+                    "name": "Astrosoul - RnB & Soul Aesthetics III",
+                    "files": [
+                        {
+                            "uuid": "5195cf8b-b1a7-4175-bf0c-aacc65491637",
+                            "path": "v1756154608/c5kqhv4edsrtfnbdqhqo.jpg",
+                            "asset_file_type_slug": "cover_image",
+                            "url": "https://splice-res.cloudinary.com/image/upload/f_auto,q_auto,w_auto/c_limit,w_450/v1756154608/c5kqhv4edsrtfnbdqhqo.jpg",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "ccc99ee0-d82f-4295-b9a6-be2f19e2f737",
+                            "path": "",
+                            "asset_file_type_slug": "demo_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/8a64c8ee-7915-4e66-bb8b-ef997faaed02/demo.mp3",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "033a5abb-2675-4470-aa9a-f1821d5872f6",
+                            "path": "",
+                            "asset_file_type_slug": "preview_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/8a64c8ee-7915-4e66-bb8b-ef997faaed02/demo.mp3",
+                            "__typename": "AssetFile"
+                        }
+                    ],
+                    "__typename": "PackAsset"
+                }
+            ],
+            "__typename": "AssetPage"
+        },
+        "bpm": 90,
+        "chord_type": "minor",
+        "key": "c#",
+        "duration": 21333,
+        "asset_category_slug": "loop"
+    },
+    {
+        "asset_type_slug": "sample",
+        "asset_prices": [
+            {
+                "amount": 1,
+                "currency": "Credits",
+                "__typename": "Price"
+            }
+        ],
+        "uuid": "478e89319e96d058fa7fa131efef3872683b266d71899ab72e8c57583c6a5f78",
+        "name": "Dream_Pops_Vol._1_3/loops/melodic_loops/guitar/OSS_DP_80_acoustic_guitar_pop_fingerstyle_wisdom_D#maj.wav",
+        "tags": [
+            {
+                "uuid": "60845712-1235-4d2d-a3ce-f68a4ca625df",
+                "label": "acoustic",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "bdda9fa9-e4eb-4ec5-9593-7885f9c8ddba",
+                "label": "guitar",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "f136a231-7037-4c27-95f8-dd528b50e824",
+                "label": "pop",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "18503383-8e54-458c-be3b-ff70c73adcfa",
+                "label": "indie",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "20a4a580-8211-4a39-95b7-6fa45c9e080c",
+                "label": "indie pop",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "f5329389-c031-4f25-98fc-ece29764d87c",
+                "label": "dream pop",
+                "__typename": "Tag"
+            }
+        ],
+        "files": [
+            {
+                "uuid": "dc2644f3-10ef-4c97-a5e3-73d4cf074e36",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/478e89319e96d058fa7fa131efef3872683b266d71899ab72e8c57583c6a5f78-scrambled/478e89319e96d058fa7fa131efef3872683b266d71899ab72e8c57583c6a5f78.mp3",
+                "asset_file_type_slug": "preview_mp3",
+                "url": "https://spliceproduction.s3.us-west-1.amazonaws.com/audio_samples/478e89319e96d058fa7fa131efef3872683b266d71899ab72e8c57583c6a5f78-scrambled/478e89319e96d058fa7fa131efef3872683b266d71899ab72e8c57583c6a5f78.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=ASIARXANDEUAY6PICTTF%2F20251015%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20251015T180307Z&X-Amz-Expires=21600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJIMEYCIQDkwbqfcFVpZ2blh6rg0GoMVzGyHQq9wUS221ttx7K90AIhAL8Vd25RTkuFTBWQZqSDrBnVUm%2BdOal9SIGZnZPzXhiKKusDCHkQABoMMTE4MTM5MDY5Njk3IgyMLysCp2LpKbBOkjkqyAPAy9kYpQrU51C3eE57XT%2FP6zQl%2BEgYZjNwYbRY3bVlIK%2Fau6nY7%2BM3UBaASH0jX92hZQ1%2B1AfxUH%2BSc3WYz9CEPzc%2BpN1vn0a6rXYdJTcBaKWwZyiFStqT%2FI3%2BZXb2KlHEDsCpuRSKmBN6SEpbX6DahbBd4Xq7AyO1k2xPxij8dZXiCz0xk6M95iePHbq1tgjzJ6O6j%2FZkf1PPJtYcG4wOS25SSzbRoc3t4BstWAhQlCWtyep5paT%2B5cpmO4iViZdAgvR7usYdQ7wmp0eofH0r3jZAeQfPn%2Bb4zZ21pW1BiyKKEwfdjL6zaWt2mM3ANe9v4LAkNryzEyqcotSbMAnmFO%2B8UEkxg00EMEUt8j2gKk%2BSrc%2Fywsiu0R1Ccyqva%2F5nITclcdu5if4Ba%2BYDpPYVGtj%2FDmKCZcfzd2rVlJ%2F%2BhzhBakcjC4MheOGX1X6j0pHoQDYOA7USNQuZq5q3dAyHjsSBzcZFN4%2BsUFEDLjKQU5AXaupu9kZgLedDaYKQ1OlB8FiMjHnazrWmAqwg1YBHGAR8V66nh%2FoxXz80WISgrzaRH92PpsiqX9lpz3vLuvqIBpZb%2BmON4rY661qz7asvj97quaqoiaUw8pG%2FxwY6pAFckJVrklTGvnggCnMBTJ3anZM97WQfnm%2BBQwNwLcH8SL23RZ8kx5wE50j3zfwz5w2Dnb%2B2yw25yWUA21lAArB8a6RFWMA1RJAO8FVdudHuFf5dCJ%2BxM%2Fd1YzURgwZcOmygrmPFHzX6V6uj7B65PAhgcqVPpEhNv1u2lkiBTwS4P1tL0QKjnzqe5icxOOBE7bBIRymw%2FNx%2Fu4BG7Gab8U5N8nb0PA%3D%3D&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=a386b6c929a5e52c06a8da74ad76fd36974c968f4e8c0215f49e40990dd9dd34",
+                "__typename": "AssetFile"
+            },
+            {
+                "uuid": "568d7516-a80d-4bd1-acb5-c64aec6610b0",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/478e89319e96d058fa7fa131efef3872683b266d71899ab72e8c57583c6a5f78.wv.json",
+                "asset_file_type_slug": "waveform",
+                "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/audio_samples/478e89319e96d058fa7fa131efef3872683b266d71899ab72e8c57583c6a5f78.wv.json",
+                "__typename": "AssetFile"
+            }
+        ],
+        "__typename": "SampleAsset",
+        "parents": {
+            "items": [
+                {
+                    "permalink_slug": "dream-pops-vol-1-by-dylan-kidd",
+                    "permalink_base_url": "one-stop-shop",
+                    "uuid": "37f16d5b-0597-457f-9e1c-177a927cb9d0",
+                    "name": "Dream Pops Vol.1 by Dylan Kidd",
+                    "files": [
+                        {
+                            "uuid": "b582d300-94e3-42cc-b0c7-288af4723fca",
+                            "path": "v1751345060/psxqvle2ban25h1fyoc8.jpg",
+                            "asset_file_type_slug": "cover_image",
+                            "url": "https://splice-res.cloudinary.com/image/upload/f_auto,q_auto,w_auto/c_limit,w_450/v1751345060/psxqvle2ban25h1fyoc8.jpg",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "1bc67be4-51c9-4636-b7fd-fde3ff6e0fab",
+                            "path": "",
+                            "asset_file_type_slug": "demo_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/a773a5ee-0afa-4a95-9a3c-89f47c3c7f0e/demo.mp3",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "8a875aff-9b89-4b6f-9f7a-75fbc9933b37",
+                            "path": "",
+                            "asset_file_type_slug": "preview_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/a773a5ee-0afa-4a95-9a3c-89f47c3c7f0e/demo.mp3",
+                            "__typename": "AssetFile"
+                        }
+                    ],
+                    "__typename": "PackAsset"
+                }
+            ],
+            "__typename": "AssetPage"
+        },
+        "bpm": 80,
+        "chord_type": "major",
+        "key": "d#",
+        "duration": 24000,
+        "asset_category_slug": "loop"
+    },
+    {
+        "asset_type_slug": "sample",
+        "asset_prices": [
+            {
+                "amount": 1,
+                "currency": "Credits",
+                "__typename": "Price"
+            }
+        ],
+        "uuid": "bd13d3145a643b49cee4ade3ef390c1fff3f853378b2cff8baf3040063183771",
+        "name": "LEX_Sounds_Calamity/loops/guitar/melodic_stacks/LEX_CSPBRJ_120_Acoustic_Guitar_Loop_Heroic_Stack_Amin.wav",
+        "tags": [
+            {
+                "uuid": "5b78c4d9-4555-464f-bce2-5961c74b6446",
+                "label": "hip hop",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "60845712-1235-4d2d-a3ce-f68a4ca625df",
+                "label": "acoustic",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "bdda9fa9-e4eb-4ec5-9593-7885f9c8ddba",
+                "label": "guitar",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "db48570c-6e15-4f8b-8fdb-c63b2d26cc66",
+                "label": "trap",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "ef7dcc07-6614-4b5f-a61f-201f384f7f3e",
+                "label": "melodic stack",
+                "__typename": "Tag"
+            }
+        ],
+        "files": [
+            {
+                "uuid": "94c8f6c4-c7c3-47b0-af41-76af249dc263",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/bd13d3145a643b49cee4ade3ef390c1fff3f853378b2cff8baf3040063183771-scrambled/bd13d3145a643b49cee4ade3ef390c1fff3f853378b2cff8baf3040063183771.mp3",
+                "asset_file_type_slug": "preview_mp3",
+                "url": "https://spliceproduction.s3.us-west-1.amazonaws.com/audio_samples/bd13d3145a643b49cee4ade3ef390c1fff3f853378b2cff8baf3040063183771-scrambled/bd13d3145a643b49cee4ade3ef390c1fff3f853378b2cff8baf3040063183771.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=ASIARXANDEUAY6PICTTF%2F20251015%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20251015T180307Z&X-Amz-Expires=21600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJIMEYCIQDkwbqfcFVpZ2blh6rg0GoMVzGyHQq9wUS221ttx7K90AIhAL8Vd25RTkuFTBWQZqSDrBnVUm%2BdOal9SIGZnZPzXhiKKusDCHkQABoMMTE4MTM5MDY5Njk3IgyMLysCp2LpKbBOkjkqyAPAy9kYpQrU51C3eE57XT%2FP6zQl%2BEgYZjNwYbRY3bVlIK%2Fau6nY7%2BM3UBaASH0jX92hZQ1%2B1AfxUH%2BSc3WYz9CEPzc%2BpN1vn0a6rXYdJTcBaKWwZyiFStqT%2FI3%2BZXb2KlHEDsCpuRSKmBN6SEpbX6DahbBd4Xq7AyO1k2xPxij8dZXiCz0xk6M95iePHbq1tgjzJ6O6j%2FZkf1PPJtYcG4wOS25SSzbRoc3t4BstWAhQlCWtyep5paT%2B5cpmO4iViZdAgvR7usYdQ7wmp0eofH0r3jZAeQfPn%2Bb4zZ21pW1BiyKKEwfdjL6zaWt2mM3ANe9v4LAkNryzEyqcotSbMAnmFO%2B8UEkxg00EMEUt8j2gKk%2BSrc%2Fywsiu0R1Ccyqva%2F5nITclcdu5if4Ba%2BYDpPYVGtj%2FDmKCZcfzd2rVlJ%2F%2BhzhBakcjC4MheOGX1X6j0pHoQDYOA7USNQuZq5q3dAyHjsSBzcZFN4%2BsUFEDLjKQU5AXaupu9kZgLedDaYKQ1OlB8FiMjHnazrWmAqwg1YBHGAR8V66nh%2FoxXz80WISgrzaRH92PpsiqX9lpz3vLuvqIBpZb%2BmON4rY661qz7asvj97quaqoiaUw8pG%2FxwY6pAFckJVrklTGvnggCnMBTJ3anZM97WQfnm%2BBQwNwLcH8SL23RZ8kx5wE50j3zfwz5w2Dnb%2B2yw25yWUA21lAArB8a6RFWMA1RJAO8FVdudHuFf5dCJ%2BxM%2Fd1YzURgwZcOmygrmPFHzX6V6uj7B65PAhgcqVPpEhNv1u2lkiBTwS4P1tL0QKjnzqe5icxOOBE7bBIRymw%2FNx%2Fu4BG7Gab8U5N8nb0PA%3D%3D&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=431d5e135a58dedef01a465f68d7db9261bf1ca1e0bc89ed901e4b300d7dddef",
+                "__typename": "AssetFile"
+            },
+            {
+                "uuid": "20964e1e-7fd4-433e-88fa-bbe315b59e24",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/bd13d3145a643b49cee4ade3ef390c1fff3f853378b2cff8baf3040063183771.wv.json",
+                "asset_file_type_slug": "waveform",
+                "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/audio_samples/bd13d3145a643b49cee4ade3ef390c1fff3f853378b2cff8baf3040063183771.wv.json",
+                "__typename": "AssetFile"
+            }
+        ],
+        "__typename": "SampleAsset",
+        "parents": {
+            "items": [
+                {
+                    "permalink_slug": "calamity-acoustic-trap-melodies-by-red-jon",
+                    "permalink_base_url": "lex-sounds",
+                    "uuid": "b4eb86dd-e3bc-42bf-aad6-4d392b27d284",
+                    "name": "Calamity: Acoustic Trap Melodies by Red Jon",
+                    "files": [
+                        {
+                            "uuid": "a23adf00-4799-49f3-827c-289740e24d99",
+                            "path": "v1755114552/r3stqcvprismjpu4bcku.jpg",
+                            "asset_file_type_slug": "cover_image",
+                            "url": "https://splice-res.cloudinary.com/image/upload/f_auto,q_auto,w_auto/c_limit,w_450/v1755114552/r3stqcvprismjpu4bcku.jpg",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "b0418836-b8e3-437a-92d4-e118be7c41cc",
+                            "path": "",
+                            "asset_file_type_slug": "demo_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/114b4af7-b188-4041-89ab-1b7bde2af83e/demo.mp3",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "f263fe0c-8096-4eb4-9fc8-f7d6d52206d1",
+                            "path": "",
+                            "asset_file_type_slug": "preview_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/114b4af7-b188-4041-89ab-1b7bde2af83e/demo.mp3",
+                            "__typename": "AssetFile"
+                        }
+                    ],
+                    "__typename": "PackAsset"
+                }
+            ],
+            "__typename": "AssetPage"
+        },
+        "bpm": 120,
+        "chord_type": "minor",
+        "key": "a",
+        "duration": 16000,
+        "asset_category_slug": "loop"
+    },
+    {
+        "asset_type_slug": "sample",
+        "asset_prices": [
+            {
+                "amount": 1,
+                "currency": "Credits",
+                "__typename": "Price"
+            }
+        ],
+        "uuid": "c6646b571ede53f3a98995c1651708579b50313884d6d7952645eff03e72c7d6",
+        "name": "Audeobox_-_Vibes_8/Audeobox_-_VIbes_8_-_Loops/Stem_Loops/Acoustic_Guitar_Melody_Stems/AB_V8_jc_70_acoustic_guitar_melody_softball_Em.wav",
+        "tags": [
+            {
+                "uuid": "60845712-1235-4d2d-a3ce-f68a4ca625df",
+                "label": "acoustic",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "bdda9fa9-e4eb-4ec5-9593-7885f9c8ddba",
+                "label": "guitar",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "e61a976d-fa99-4279-94e2-dfaba37b195b",
+                "label": "melody",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "db48570c-6e15-4f8b-8fdb-c63b2d26cc66",
+                "label": "trap",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "3d8b3172-e93a-4fe0-aa3b-4d8c22026b23",
+                "label": "rnb",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "f136a231-7037-4c27-95f8-dd528b50e824",
+                "label": "pop",
+                "__typename": "Tag"
+            }
+        ],
+        "files": [
+            {
+                "uuid": "dac3d5d0-735f-4fac-af59-c9b1e9cbea41",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/c6646b571ede53f3a98995c1651708579b50313884d6d7952645eff03e72c7d6-scrambled/c6646b571ede53f3a98995c1651708579b50313884d6d7952645eff03e72c7d6.mp3",
+                "asset_file_type_slug": "preview_mp3",
+                "url": "https://spliceproduction.s3.us-west-1.amazonaws.com/audio_samples/c6646b571ede53f3a98995c1651708579b50313884d6d7952645eff03e72c7d6-scrambled/c6646b571ede53f3a98995c1651708579b50313884d6d7952645eff03e72c7d6.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=ASIARXANDEUAY6PICTTF%2F20251015%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20251015T180307Z&X-Amz-Expires=21600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJIMEYCIQDkwbqfcFVpZ2blh6rg0GoMVzGyHQq9wUS221ttx7K90AIhAL8Vd25RTkuFTBWQZqSDrBnVUm%2BdOal9SIGZnZPzXhiKKusDCHkQABoMMTE4MTM5MDY5Njk3IgyMLysCp2LpKbBOkjkqyAPAy9kYpQrU51C3eE57XT%2FP6zQl%2BEgYZjNwYbRY3bVlIK%2Fau6nY7%2BM3UBaASH0jX92hZQ1%2B1AfxUH%2BSc3WYz9CEPzc%2BpN1vn0a6rXYdJTcBaKWwZyiFStqT%2FI3%2BZXb2KlHEDsCpuRSKmBN6SEpbX6DahbBd4Xq7AyO1k2xPxij8dZXiCz0xk6M95iePHbq1tgjzJ6O6j%2FZkf1PPJtYcG4wOS25SSzbRoc3t4BstWAhQlCWtyep5paT%2B5cpmO4iViZdAgvR7usYdQ7wmp0eofH0r3jZAeQfPn%2Bb4zZ21pW1BiyKKEwfdjL6zaWt2mM3ANe9v4LAkNryzEyqcotSbMAnmFO%2B8UEkxg00EMEUt8j2gKk%2BSrc%2Fywsiu0R1Ccyqva%2F5nITclcdu5if4Ba%2BYDpPYVGtj%2FDmKCZcfzd2rVlJ%2F%2BhzhBakcjC4MheOGX1X6j0pHoQDYOA7USNQuZq5q3dAyHjsSBzcZFN4%2BsUFEDLjKQU5AXaupu9kZgLedDaYKQ1OlB8FiMjHnazrWmAqwg1YBHGAR8V66nh%2FoxXz80WISgrzaRH92PpsiqX9lpz3vLuvqIBpZb%2BmON4rY661qz7asvj97quaqoiaUw8pG%2FxwY6pAFckJVrklTGvnggCnMBTJ3anZM97WQfnm%2BBQwNwLcH8SL23RZ8kx5wE50j3zfwz5w2Dnb%2B2yw25yWUA21lAArB8a6RFWMA1RJAO8FVdudHuFf5dCJ%2BxM%2Fd1YzURgwZcOmygrmPFHzX6V6uj7B65PAhgcqVPpEhNv1u2lkiBTwS4P1tL0QKjnzqe5icxOOBE7bBIRymw%2FNx%2Fu4BG7Gab8U5N8nb0PA%3D%3D&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=65b967ac9efd0449d9f753b04b6d34aa93a9ce6652df4bae974b22f1eed928e7",
+                "__typename": "AssetFile"
+            },
+            {
+                "uuid": "cfbcce5b-0901-4945-b619-4750ea0f784c",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/c6646b571ede53f3a98995c1651708579b50313884d6d7952645eff03e72c7d6.wv.json",
+                "asset_file_type_slug": "waveform",
+                "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/audio_samples/c6646b571ede53f3a98995c1651708579b50313884d6d7952645eff03e72c7d6.wv.json",
+                "__typename": "AssetFile"
+            }
+        ],
+        "__typename": "SampleAsset",
+        "parents": {
+            "items": [
+                {
+                    "permalink_slug": "vibes-8",
+                    "permalink_base_url": "audeobox",
+                    "uuid": "81c769a0-72e6-4513-88d9-b8662725dd21",
+                    "name": "Vibes 8",
+                    "files": [
+                        {
+                            "uuid": "55a08858-21ba-4edb-838e-7c3ce22d6a92",
+                            "path": "v1753921346/clproxfgbowz2rad5t9r.jpg",
+                            "asset_file_type_slug": "cover_image",
+                            "url": "https://splice-res.cloudinary.com/image/upload/f_auto,q_auto,w_auto/c_limit,w_450/v1753921346/clproxfgbowz2rad5t9r.jpg",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "7e6a005d-fed6-4481-9b98-d3a57f1dd106",
+                            "path": "",
+                            "asset_file_type_slug": "demo_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/92237e27-dc1c-43ee-a363-7f22b5ad5b8b/demo.mp3",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "bc030fbd-5529-406b-b769-e939602fe8cb",
+                            "path": "",
+                            "asset_file_type_slug": "preview_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/92237e27-dc1c-43ee-a363-7f22b5ad5b8b/demo.mp3",
+                            "__typename": "AssetFile"
+                        }
+                    ],
+                    "__typename": "PackAsset"
+                }
+            ],
+            "__typename": "AssetPage"
+        },
+        "bpm": 70,
+        "chord_type": "minor",
+        "key": "e",
+        "duration": 13714,
+        "asset_category_slug": "loop"
+    },
+    {
+        "asset_type_slug": "sample",
+        "asset_prices": [
+            {
+                "amount": 1,
+                "currency": "Credits",
+                "__typename": "Price"
+            }
+        ],
+        "uuid": "d3065fa635cbd0d0dd6dc35960172218ca9c88948592e771f78901839d7a0027",
+        "name": "PEARLS/Loops/guitar_loops/JT_P_98_acoustic_guitar_chords_loop_tyla_Em.wav",
+        "tags": [
+            {
+                "uuid": "5b78c4d9-4555-464f-bce2-5961c74b6446",
+                "label": "hip hop",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "60845712-1235-4d2d-a3ce-f68a4ca625df",
+                "label": "acoustic",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "bdda9fa9-e4eb-4ec5-9593-7885f9c8ddba",
+                "label": "guitar",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "bc2d49b8-790c-4778-9a2b-539e4d7d618a",
+                "label": "soul",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "618d028c-83ae-498e-8fab-04e71a975142",
+                "label": "chords",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "3d8b3172-e93a-4fe0-aa3b-4d8c22026b23",
+                "label": "rnb",
+                "__typename": "Tag"
+            }
+        ],
+        "files": [
+            {
+                "uuid": "23ff51ae-7181-403b-98ef-931b705ce9f7",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/d3065fa635cbd0d0dd6dc35960172218ca9c88948592e771f78901839d7a0027-scrambled/d3065fa635cbd0d0dd6dc35960172218ca9c88948592e771f78901839d7a0027.mp3",
+                "asset_file_type_slug": "preview_mp3",
+                "url": "https://spliceproduction.s3.us-west-1.amazonaws.com/audio_samples/d3065fa635cbd0d0dd6dc35960172218ca9c88948592e771f78901839d7a0027-scrambled/d3065fa635cbd0d0dd6dc35960172218ca9c88948592e771f78901839d7a0027.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=ASIARXANDEUAY6PICTTF%2F20251015%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20251015T180307Z&X-Amz-Expires=21600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJIMEYCIQDkwbqfcFVpZ2blh6rg0GoMVzGyHQq9wUS221ttx7K90AIhAL8Vd25RTkuFTBWQZqSDrBnVUm%2BdOal9SIGZnZPzXhiKKusDCHkQABoMMTE4MTM5MDY5Njk3IgyMLysCp2LpKbBOkjkqyAPAy9kYpQrU51C3eE57XT%2FP6zQl%2BEgYZjNwYbRY3bVlIK%2Fau6nY7%2BM3UBaASH0jX92hZQ1%2B1AfxUH%2BSc3WYz9CEPzc%2BpN1vn0a6rXYdJTcBaKWwZyiFStqT%2FI3%2BZXb2KlHEDsCpuRSKmBN6SEpbX6DahbBd4Xq7AyO1k2xPxij8dZXiCz0xk6M95iePHbq1tgjzJ6O6j%2FZkf1PPJtYcG4wOS25SSzbRoc3t4BstWAhQlCWtyep5paT%2B5cpmO4iViZdAgvR7usYdQ7wmp0eofH0r3jZAeQfPn%2Bb4zZ21pW1BiyKKEwfdjL6zaWt2mM3ANe9v4LAkNryzEyqcotSbMAnmFO%2B8UEkxg00EMEUt8j2gKk%2BSrc%2Fywsiu0R1Ccyqva%2F5nITclcdu5if4Ba%2BYDpPYVGtj%2FDmKCZcfzd2rVlJ%2F%2BhzhBakcjC4MheOGX1X6j0pHoQDYOA7USNQuZq5q3dAyHjsSBzcZFN4%2BsUFEDLjKQU5AXaupu9kZgLedDaYKQ1OlB8FiMjHnazrWmAqwg1YBHGAR8V66nh%2FoxXz80WISgrzaRH92PpsiqX9lpz3vLuvqIBpZb%2BmON4rY661qz7asvj97quaqoiaUw8pG%2FxwY6pAFckJVrklTGvnggCnMBTJ3anZM97WQfnm%2BBQwNwLcH8SL23RZ8kx5wE50j3zfwz5w2Dnb%2B2yw25yWUA21lAArB8a6RFWMA1RJAO8FVdudHuFf5dCJ%2BxM%2Fd1YzURgwZcOmygrmPFHzX6V6uj7B65PAhgcqVPpEhNv1u2lkiBTwS4P1tL0QKjnzqe5icxOOBE7bBIRymw%2FNx%2Fu4BG7Gab8U5N8nb0PA%3D%3D&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=d4b5f732d0a1334e3b8a92926afebe1e99aaa7ad35da2b0f523b55d641773dd9",
+                "__typename": "AssetFile"
+            },
+            {
+                "uuid": "563c6bd8-2613-4c37-a0d0-1c9e08803893",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/d3065fa635cbd0d0dd6dc35960172218ca9c88948592e771f78901839d7a0027.wv.json",
+                "asset_file_type_slug": "waveform",
+                "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/audio_samples/d3065fa635cbd0d0dd6dc35960172218ca9c88948592e771f78901839d7a0027.wv.json",
+                "__typename": "AssetFile"
+            }
+        ],
+        "__typename": "SampleAsset",
+        "parents": {
+            "items": [
+                {
+                    "permalink_slug": "pearls-jazzfeezy-and-ty",
+                    "permalink_base_url": "jazzfeezy",
+                    "uuid": "a042976c-0bcc-4ec2-965a-a81b193bebe4",
+                    "name": "Pearls (Jazzfeezy & TY)",
+                    "files": [
+                        {
+                            "uuid": "57ee8519-1af3-4b1c-8104-73a1ffa85086",
+                            "path": "v1755119433/lhmndjwmo50waim6jfpw.jpg",
+                            "asset_file_type_slug": "cover_image",
+                            "url": "https://splice-res.cloudinary.com/image/upload/f_auto,q_auto,w_auto/c_limit,w_450/v1755119433/lhmndjwmo50waim6jfpw.jpg",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "6af0e46b-75d1-49c0-bbe4-353d8303bb1f",
+                            "path": "",
+                            "asset_file_type_slug": "demo_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/a7c15024-7cc5-4ee4-9a66-eefd4e9a3d4f/demo.mp3",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "434c6198-5b32-45a5-ab8a-41abb61f72a0",
+                            "path": "",
+                            "asset_file_type_slug": "preview_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/a7c15024-7cc5-4ee4-9a66-eefd4e9a3d4f/demo.mp3",
+                            "__typename": "AssetFile"
+                        }
+                    ],
+                    "__typename": "PackAsset"
+                }
+            ],
+            "__typename": "AssetPage"
+        },
+        "bpm": 98,
+        "chord_type": "minor",
+        "key": "e",
+        "duration": 19591,
+        "asset_category_slug": "loop"
+    },
+    {
+        "asset_type_slug": "sample",
+        "asset_prices": [
+            {
+                "amount": 1,
+                "currency": "Credits",
+                "__typename": "Price"
+            }
+        ],
+        "uuid": "180542c3f37518fe162420ce9ebb0ca27f877a0f83a681dd1808331fb2729404",
+        "name": "Decliped_Samples_-_Post-Punk/Loops/Melodic_Loops/Guitar_Loops/DS_PP_150_electric_guitar_shadow_C#min.wav",
+        "tags": [
+            {
+                "uuid": "bdda9fa9-e4eb-4ec5-9593-7885f9c8ddba",
+                "label": "guitar",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "8398c145-0612-4bee-991d-60e81fcdba95",
+                "label": "electric guitar",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "18503383-8e54-458c-be3b-ff70c73adcfa",
+                "label": "indie",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "25a795c8-3a2b-427f-9f4e-30c20bb39f1a",
+                "label": "indie rock",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "f5fcc285-16b4-4ba0-ac86-705ec607a78a",
+                "label": "synth-pop",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "f15b8a36-f4dd-40c2-9769-85814e117f82",
+                "label": "post-punk",
+                "__typename": "Tag"
+            },
+            {
+                "uuid": "a6d2eb01-3b14-4cb7-b4c2-979c2f83d160",
+                "label": "punk",
+                "__typename": "Tag"
+            }
+        ],
+        "files": [
+            {
+                "uuid": "363d6dfe-addf-4cec-8741-1bfb8be8eb3a",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/180542c3f37518fe162420ce9ebb0ca27f877a0f83a681dd1808331fb2729404-scrambled/180542c3f37518fe162420ce9ebb0ca27f877a0f83a681dd1808331fb2729404.mp3",
+                "asset_file_type_slug": "preview_mp3",
+                "url": "https://spliceproduction.s3.us-west-1.amazonaws.com/audio_samples/180542c3f37518fe162420ce9ebb0ca27f877a0f83a681dd1808331fb2729404-scrambled/180542c3f37518fe162420ce9ebb0ca27f877a0f83a681dd1808331fb2729404.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Checksum-Mode=ENABLED&X-Amz-Credential=ASIARXANDEUAY6PICTTF%2F20251015%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Date=20251015T180307Z&X-Amz-Expires=21600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEND%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLXdlc3QtMSJIMEYCIQDkwbqfcFVpZ2blh6rg0GoMVzGyHQq9wUS221ttx7K90AIhAL8Vd25RTkuFTBWQZqSDrBnVUm%2BdOal9SIGZnZPzXhiKKusDCHkQABoMMTE4MTM5MDY5Njk3IgyMLysCp2LpKbBOkjkqyAPAy9kYpQrU51C3eE57XT%2FP6zQl%2BEgYZjNwYbRY3bVlIK%2Fau6nY7%2BM3UBaASH0jX92hZQ1%2B1AfxUH%2BSc3WYz9CEPzc%2BpN1vn0a6rXYdJTcBaKWwZyiFStqT%2FI3%2BZXb2KlHEDsCpuRSKmBN6SEpbX6DahbBd4Xq7AyO1k2xPxij8dZXiCz0xk6M95iePHbq1tgjzJ6O6j%2FZkf1PPJtYcG4wOS25SSzbRoc3t4BstWAhQlCWtyep5paT%2B5cpmO4iViZdAgvR7usYdQ7wmp0eofH0r3jZAeQfPn%2Bb4zZ21pW1BiyKKEwfdjL6zaWt2mM3ANe9v4LAkNryzEyqcotSbMAnmFO%2B8UEkxg00EMEUt8j2gKk%2BSrc%2Fywsiu0R1Ccyqva%2F5nITclcdu5if4Ba%2BYDpPYVGtj%2FDmKCZcfzd2rVlJ%2F%2BhzhBakcjC4MheOGX1X6j0pHoQDYOA7USNQuZq5q3dAyHjsSBzcZFN4%2BsUFEDLjKQU5AXaupu9kZgLedDaYKQ1OlB8FiMjHnazrWmAqwg1YBHGAR8V66nh%2FoxXz80WISgrzaRH92PpsiqX9lpz3vLuvqIBpZb%2BmON4rY661qz7asvj97quaqoiaUw8pG%2FxwY6pAFckJVrklTGvnggCnMBTJ3anZM97WQfnm%2BBQwNwLcH8SL23RZ8kx5wE50j3zfwz5w2Dnb%2B2yw25yWUA21lAArB8a6RFWMA1RJAO8FVdudHuFf5dCJ%2BxM%2Fd1YzURgwZcOmygrmPFHzX6V6uj7B65PAhgcqVPpEhNv1u2lkiBTwS4P1tL0QKjnzqe5icxOOBE7bBIRymw%2FNx%2Fu4BG7Gab8U5N8nb0PA%3D%3D&X-Amz-SignedHeaders=host&x-id=GetObject&X-Amz-Signature=8b09866d4bf6bc88e6297ae37d624d969a1ec84429dd0961c5a9737e8bc6fb13",
+                "__typename": "AssetFile"
+            },
+            {
+                "uuid": "f7cea367-8ed3-4dfb-a33b-0536b695cc42",
+                "name": "",
+                "hash": "",
+                "path": "audio_samples/180542c3f37518fe162420ce9ebb0ca27f877a0f83a681dd1808331fb2729404.wv.json",
+                "asset_file_type_slug": "waveform",
+                "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/audio_samples/180542c3f37518fe162420ce9ebb0ca27f877a0f83a681dd1808331fb2729404.wv.json",
+                "__typename": "AssetFile"
+            }
+        ],
+        "__typename": "SampleAsset",
+        "parents": {
+            "items": [
+                {
+                    "permalink_slug": "post-punk",
+                    "permalink_base_url": "decliped-samples",
+                    "uuid": "c4158053-4de4-4b49-bff2-3eba16d84319",
+                    "name": "Post-Punk",
+                    "files": [
+                        {
+                            "uuid": "1322c930-6cce-4ef5-91b9-c6c55ceb8a1b",
+                            "path": "v1742870767/oxk1cw5bvtwtnqvmo6gw.jpg",
+                            "asset_file_type_slug": "cover_image",
+                            "url": "https://splice-res.cloudinary.com/image/upload/f_auto,q_auto,w_auto/c_limit,w_450/v1742870767/oxk1cw5bvtwtnqvmo6gw.jpg",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "d1397d6b-f07d-4928-9c9e-d46b39cda09c",
+                            "path": "",
+                            "asset_file_type_slug": "demo_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/4604bb50-3b7a-44a1-932b-c34e839a6077/demo.mp3",
+                            "__typename": "AssetFile"
+                        },
+                        {
+                            "uuid": "671cb045-458b-47fc-ac23-3d452769346b",
+                            "path": "",
+                            "asset_file_type_slug": "preview_mp3",
+                            "url": "https://s3-us-west-1.amazonaws.com/spliceblob.splice.com/sample_pack_demos/4604bb50-3b7a-44a1-932b-c34e839a6077/demo.mp3",
+                            "__typename": "AssetFile"
+                        }
+                    ],
+                    "__typename": "PackAsset"
+                }
+            ],
+            "__typename": "AssetPage"
+        },
+        "bpm": 150,
+        "chord_type": "minor",
+        "key": "c#",
+        "duration": 12800,
+        "asset_category_slug": "loop"
+    }
+]

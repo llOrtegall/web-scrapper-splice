@@ -12,15 +12,15 @@ export function getGenresSplice(){
   }
 }
 
-export function createSearchRequest(queryStr: string) {
+export function createSearchRequest(queryStr: string = "", page: number = 1, genre?: string) {
   return {
     operationName: "SamplesSearch",
     variables: {
       order: "DESC",
       sort: "popularity",
-      limit: 10,
-      page: 1,
-      tags: [],
+      limit: 50,
+      page: page,
+      tags: [genre || ''],
       key: null,
       chord_type: null,
       bpm: null,
@@ -35,8 +35,8 @@ export function createSearchRequest(queryStr: string) {
   }
 }
 
-export async function postSearchRequest(query: string) {
-  const request = createSearchRequest(query);
+export async function postSearchRequest(query: string, page: number = 1, genre?: string) {
+  const request = createSearchRequest(query, page, genre);
   try {
     const response = await axios.post<DataResponse>("/graphql", request);
     return response.data?.data;
