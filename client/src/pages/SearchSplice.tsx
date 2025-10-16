@@ -81,6 +81,21 @@ function SearchSpliceSample() {
       .finally(() => setLoading(false));
   };
 
+  const handlseSelectGenre = (genre: string) => {
+    setItems([]);
+    setLoading(true);
+    postSearchRequest(searchQuery, 1, genre)
+      .then(res => {
+        if (res && (res as Data).assetsSearch) {
+          setItems((res as Data).assetsSearch.items);
+          setCurrentPage((res as Data).assetsSearch.pagination_metadata.currentPage);
+          setTotalPages((res as Data).assetsSearch.pagination_metadata.totalPages);
+        }
+      })
+      .catch(error => setError(error))
+      .finally(() => setLoading(false));
+  }
+
   return (
     <section className="px-0 pt-8 flex flex-col">
 
@@ -141,6 +156,7 @@ function SearchSpliceSample() {
                                 key={sub.uuid}
                                 variant="default"
                                 className="cursor-pointer hover:bg-blue-300"
+                                onClick={() => handlseSelectGenre(sub.tags[0].uuid)} 
                               >
                                 {sub.name}
                               </Badge>
