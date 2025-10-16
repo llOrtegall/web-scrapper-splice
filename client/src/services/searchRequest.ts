@@ -18,7 +18,7 @@ export function createSearchRequest(queryStr: string) {
     variables: {
       order: "DESC",
       sort: "popularity",
-      limit: 10,
+      limit: 50,
       page: 1,
       tags: [],
       key: null,
