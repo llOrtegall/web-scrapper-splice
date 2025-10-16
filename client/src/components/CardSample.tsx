@@ -2,13 +2,14 @@ import { Download, PlayCircle, StopCircle, Music, Clock, Activity } from "lucide
 import { useEffect, useRef, useState } from "react";
 import { decodeSpliceAudio } from "@/utils/decoder";
 import type { Item } from "../types/searhResponse";
+import { Spinner } from "./ui/spinner";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import axios from "axios";
 
 export function CardSample({ items }: { items: Item[] }) {
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [audioLoading, setAudioLoading] = useState(false);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   function extractImageUrl(sample: Item): string {
@@ -57,11 +58,11 @@ export function CardSample({ items }: { items: Item[] }) {
         audioRef.current.src = "";
       }
       setPlayingId(null);
-      setAudioLoading(false);
+      setLoadingId(null);
       return;
     }
 
-    setAudioLoading(true);
+    setLoadingId(sample.uuid);
     try {
       // Detener cualquier audio anterior
       if (audioRef.current) {
@@ -83,15 +84,15 @@ export function CardSample({ items }: { items: Item[] }) {
       const audio = new window.Audio(blobUrl);
       audioRef.current = audio;
       audio.onended = () => setPlayingId(null);
-      audio.oncanplay = () => setAudioLoading(false);
+      audio.oncanplay = () => setLoadingId(null);
       audio.onerror = () => {
-        setAudioLoading(false);
+        setLoadingId(null);
         setPlayingId(null);
       };
       setPlayingId(sample.uuid);
       await audio.play();
     } catch (error) {
-      setAudioLoading(false);
+      setLoadingId(null);
       setPlayingId(null);
       console.error("Error reproduciendo audio:", error);
     }
@@ -159,9 +160,14 @@ export function CardSample({ items }: { items: Item[] }) {
                 variant={playingId === sample.uuid ? "destructive" : "default"}
                 size="sm"
                 className="w-24"
-                disabled={audioLoading && playingId === sample.uuid}
+                disabled={loadingId === sample.uuid}
               >
-                {playingId === sample.uuid ? (
+                {loadingId === sample.uuid ? (
+                  <>
+                    <Spinner />
+                    Loading...
+                  </>
+                ) : playingId === sample.uuid ? (
                   <>
                     <StopCircle className="h-4 w-4" />
                     Stop
