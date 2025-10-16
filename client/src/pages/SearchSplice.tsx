@@ -209,11 +209,11 @@ function SearchSpliceSample() {
                   <PaginationEllipsis />
                 </PaginationItem>
               )}
-              <PaginationItem>
+              {/* <PaginationItem>
                 <PaginationLink onClick={() => handlePageChange(totalPages)} className="cursor-pointer">
                   {totalPages}
                 </PaginationLink>
-              </PaginationItem>
+              </PaginationItem> */}
             </>
           )}
 
@@ -223,10 +223,6 @@ function SearchSpliceSample() {
               className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
             />
           </PaginationItem>
-
-          <span className="flex-1 font-semibold text-sm ml-4">
-            Page {currentPage} of {totalPages}
-          </span>
         </PaginationContent>
       </Pagination>
 
