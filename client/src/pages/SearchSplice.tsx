@@ -32,7 +32,7 @@ function SearchSpliceSample() {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Categories | null>(null);
 
-  const [pag, setPag] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
@@ -50,11 +50,12 @@ function SearchSpliceSample() {
     ev.preventDefault();
     setLoading(true);
     setError(null);
-    postSearchRequest(searchQuery)
+    setCurrentPage(1); // Reset to first page on new search
+    postSearchRequest(searchQuery, 1)
       .then(res => {
         if (res && (res as Data).assetsSearch) {
           setItems((res as Data).assetsSearch.items);
-          setPag((res as Data).assetsSearch.pagination_metadata.currentPage);
+          setCurrentPage((res as Data).assetsSearch.pagination_metadata.currentPage);
           setTotalPages((res as Data).assetsSearch.pagination_metadata.totalPages);
         }
       })
@@ -63,15 +64,21 @@ function SearchSpliceSample() {
   };
 
   const handlePageChange = (newPage: number) => {
-    setPag(newPage);
+    if (newPage < 1 || newPage > totalPages) return;
+    
+    setLoading(true);
+    setCurrentPage(newPage);
     postSearchRequest(searchQuery, newPage)
       .then(res => {
         if (res && (res as Data).assetsSearch) {
           setItems((res as Data).assetsSearch.items);
           setTotalPages((res as Data).assetsSearch.pagination_metadata.totalPages);
+          // Scroll to top after page change
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       })
-      .catch(error => setError(error));
+      .catch(error => setError(error))
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -100,11 +107,15 @@ function SearchSpliceSample() {
           </form>
           <ScrollArea className="h-[80vh] w-full">
             <CardContent>
-              {
-                items !== undefined && items.length > 0
-                  ? <CardSample items={items} />
-                  : <div>No samples found. Try searching for something else.</div>
-              }
+              {error ? (
+                <div className="text-red-500 p-4 bg-red-50 dark:bg-red-950 rounded-md">
+                  Error: {error}
+                </div>
+              ) : items !== undefined && items.length > 0 ? (
+                <CardSample items={items} />
+              ) : (
+                <div>No samples found. Try searching for something else.</div>
+              )}
             </CardContent>
           </ScrollArea>
         </CardContent>
@@ -153,27 +164,68 @@ function SearchSpliceSample() {
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious />
+            <PaginationPrevious 
+              onClick={() => handlePageChange(currentPage - 1)}
+              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+            />
           </PaginationItem>
+
+          {/* First page */}
+          {currentPage > 3 && (
+            <>
+              <PaginationItem>
+                <PaginationLink onClick={() => handlePageChange(1)} className="cursor-pointer">
+                  1
+                </PaginationLink>
+              </PaginationItem>
+              {currentPage > 4 && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+            </>
+          )}
+
+          {/* Pages around current */}
+          {Array.from({ length: 5 }, (_, i) => currentPage - 2 + i)
+            .filter(page => page > 0 && page <= totalPages)
+            .map(page => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  onClick={() => handlePageChange(page)}
+                  isActive={currentPage === page}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+          {/* Last page */}
+          {currentPage < totalPages - 2 && (
+            <>
+              {currentPage < totalPages - 3 && (
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              )}
+              <PaginationItem>
+                <PaginationLink onClick={() => handlePageChange(totalPages)} className="cursor-pointer">
+                  {totalPages}
+                </PaginationLink>
+              </PaginationItem>
+            </>
+          )}
+
           <PaginationItem>
-            <PaginationLink >1</PaginationLink>
+            <PaginationNext 
+              onClick={() => handlePageChange(currentPage + 1)}
+              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+            />
           </PaginationItem>
-          <PaginationItem>
-            <PaginationLink isActive>
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink >3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext />
-          </PaginationItem>
-          <span className="flex-1 font-semibold" >
-            Total: {"["} {totalPages} {"]"}
+
+          <span className="flex-1 font-semibold text-sm ml-4">
+            Page {currentPage} of {totalPages}
           </span>
         </PaginationContent>
       </Pagination>
