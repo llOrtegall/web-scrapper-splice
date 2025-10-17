@@ -80,9 +80,11 @@ export const processAudio = async (req: Request, res: Response) => {
     const encodedData = new Uint8Array(buffer);
 
     const decodedData = decodeSpliceAudio(encodedData);
+    
     // Espera el resultado de convertAudio
     try {
-      const outputPath = await convertAudio(decodedData.buffer);
+      // Pasar el Uint8Array directamente, no .buffer
+      const outputPath = await convertAudio(decodedData);
       res.status(200).json({ message: 'Audio processed successfully', outputPath });
     } catch (err) {
       console.error(err);
