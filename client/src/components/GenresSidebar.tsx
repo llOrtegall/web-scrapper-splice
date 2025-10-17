@@ -45,7 +45,7 @@ export const GenresSidebar = memo(function GenresSidebar({
             <Accordion type="single" collapsible>
               {categories.categories.map(category => (
                 <AccordionItem key={category.uuid} value={category.uuid}>
-                  <AccordionTrigger className="cursor-pointer hover:text-blue-300">
+                  <AccordionTrigger className="cursor-pointer hover:text-blue-300 text-sm">
                     {category.name}
                   </AccordionTrigger>
                   <AccordionContent>
