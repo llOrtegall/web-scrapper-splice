@@ -40,7 +40,7 @@ function SearchSpliceSample() {
     <section className="px-0 pt-8 flex flex-col">
       <section className="grid grid-cols-12 gap-4">
         {/* Main Content */}
-        <CardContent className="px-12 col-span-10">
+        <CardContent className="px-2 2xl:px-12 col-span-10">
           <SearchForm
             searchQuery={searchQuery}
             loading={loading}
