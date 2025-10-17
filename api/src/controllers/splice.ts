@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { convertAudio } from "../services/ffmpeg";
+import { decodeSpliceAudio } from "../utils/decode";
 
 export const searchSpliceGraphQL = async (req: Request, res: Response) => {
   try {
@@ -54,3 +56,39 @@ export const proxyS3 = async (req: Request, res: Response) => {
     res.status(500).send("Error en proxy S3");
   }
 };
+
+export const processAudio = async (req: Request, res: Response) => {
+  const url = req.query.url as string;
+
+  if (!url) {
+    return res.status(400).json({ error: "Missing 'url' query parameter" });
+  }
+  try {
+    const response = await fetch(url, {
+      headers: {
+        "Origin": "https://splice.com",
+        "Referer": "https://splice.com/",
+      },
+    });
+
+    if (!response.ok) {
+      return res.status(response.status).send("Error fetching S3 file");
+    }
+
+    const buffer = await response.arrayBuffer();
+
+    const encodedData = new Uint8Array(buffer);
+
+    const decodedData = decodeSpliceAudio(encodedData);
+    // Espera el resultado de convertAudio
+    try {
+      const outputPath = await convertAudio(decodedData.buffer);
+      res.status(200).json({ message: 'Audio processed successfully', outputPath });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error converting audio");
+    }
+  } catch (error) {
+    res.status(500).send("Error processing audio");
+  }
+}
