@@ -14,6 +14,8 @@ node_modules
 out
 dist
 *.tgz
+postgres_data
+postgres_data/
 
 # code coverage
 coverage
