@@ -51,7 +51,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
               className="mx-auto h-24 w-36 object-contain"
             />
           </figure>
-          <CardTitle className="pb-2">Welcome to Splice Demo</CardTitle>
+          <CardTitle className="pb-2">Welcome to Splice Downloader</CardTitle>
           <CardDescription>
             Enter your username below to login to your account
           </CardDescription>
