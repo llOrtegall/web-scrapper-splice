@@ -10,6 +10,7 @@ import axios from "axios";
 export function CardSample({ items }: { items: Item[] }) {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   function extractImageUrl(sample: Item): string {
@@ -102,22 +103,22 @@ export function CardSample({ items }: { items: Item[] }) {
     const audioUrl = getAudio(sample);
     if (!audioUrl) return;
 
+    setDownloadingId(sample.uuid);
     try {
-      // Fetch del audio usando la API personalizada
-      const { data: buffer } = await axios.get<ArrayBuffer>('/s3', { responseType: 'arraybuffer', params: { url: audioUrl } })
+      // Usar el endpoint /process que retorna el WAV procesado directamente
+      const { data: wavBuffer } = await axios.get<ArrayBuffer>('/process', { 
+        responseType: 'arraybuffer', 
+        params: { url: audioUrl } 
+      });
 
-      // Decodificar el audio de Splice
-      const encodedData = new Uint8Array(buffer);
-      const decodedData = decodeSpliceAudio(encodedData);
-
-      // Crear blob del audio decodificado
-      const blob = new Blob([decodedData], { type: "audio/mpeg" });
+      // Crear blob del archivo WAV
+      const blob = new Blob([wavBuffer], { type: "audio/wav" });
       const blobUrl = window.URL.createObjectURL(blob);
 
       // Crear elemento <a> temporal para forzar descarga
       const link = document.createElement('a');
       link.href = blobUrl;
-      link.download = sample.name.split("/").pop() || 'sample.mp3';
+      link.download = sample.name.split("/").pop()?.replace(/\.[^/.]+$/, '.wav') || 'sample.wav';
       document.body.appendChild(link);
       link.click();
 
@@ -126,6 +127,8 @@ export function CardSample({ items }: { items: Item[] }) {
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error('Error downloading audio:', error);
+    } finally {
+      setDownloadingId(null);
     }
   }
 
@@ -183,9 +186,14 @@ export function CardSample({ items }: { items: Item[] }) {
                 onClick={() => handleDownload(sample)}
                 variant="outline"
                 size="sm"
-                title="Download sample"
+                title="Download sample as WAV"
+                disabled={downloadingId === sample.uuid}
               >
-                <Download className="h-4 w-4" />
+                {downloadingId === sample.uuid ? (
+                  <Spinner />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
               </Button>
             </div>
 
