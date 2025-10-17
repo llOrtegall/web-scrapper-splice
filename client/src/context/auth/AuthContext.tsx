@@ -26,12 +26,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     // validar si existe cookie con name splice-token-winkermind
-    const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('splice-token-winkermind='));
+    // const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('splice-token-winkermind='));
 
-    if (!cookie) {
-      setLoading(false);
-      return;
-    }
+    // if (!cookie) {
+    //   setLoading(false);
+    //   return;
+    // }
 
     const checkAuth = async () => {
       try {
