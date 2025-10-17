@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { convertAudio } from "../services/ffmpeg";
-import { decodeSpliceAudio } from "../utils/decode";
+import { convertAudio } from "../services/ffmpeg.js";
+import { decodeSpliceAudio } from "../utils/decode.js";
 
 export const searchSpliceGraphQL = async (req: Request, res: Response) => {
   try {
