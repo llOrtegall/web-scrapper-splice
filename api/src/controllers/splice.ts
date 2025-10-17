@@ -84,8 +84,12 @@ export const processAudio = async (req: Request, res: Response) => {
     // Espera el resultado de convertAudio
     try {
       // Pasar el Uint8Array directamente, no .buffer
-      const outputPath = await convertAudio(decodedData);
-      res.status(200).json({ message: 'Audio processed successfully', outputPath });
+      const wavBuffer = await convertAudio(decodedData);
+      
+      // Enviar el archivo WAV como buffer al cliente
+      res.setHeader('Content-Type', 'audio/wav');
+      res.setHeader('Content-Disposition', 'attachment; filename="sample.wav"');
+      res.send(wavBuffer);
     } catch (err) {
       console.error(err);
       res.status(500).send("Error converting audio");
