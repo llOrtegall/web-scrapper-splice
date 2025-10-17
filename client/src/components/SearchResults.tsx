@@ -17,7 +17,7 @@ export const SearchResults = memo(function SearchResults({
 }: SearchResultsProps) {
   return (
     <ScrollArea className="h-[80vh] w-full">
-      <CardContent>
+      <CardContent className="px-0 2xl:px-4">
         {error ? (
           <div className="text-red-500 p-4 bg-red-50 dark:bg-red-950 rounded-md border border-red-200 dark:border-red-900">
             <h3 className="font-semibold mb-1">Error</h3>
