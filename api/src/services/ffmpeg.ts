@@ -1,13 +1,17 @@
 import { spawn } from 'node:child_process';
-import { writeFile, stat } from 'node:fs/promises';
+import { writeFile, stat, unlink } from 'node:fs/promises';
+import { randomBytes } from 'node:crypto';
 
-export async function convertAudio(buff: ArrayBuffer) {
-  // Convertir ArrayBuffer a Buffer
-  const inputBuffer = Buffer.from(buff);
+export async function convertAudio(buff: Uint8Array | ArrayBuffer) {
+  // Convertir a Buffer
+  const inputBuffer = buff instanceof Uint8Array 
+    ? Buffer.from(buff.buffer, buff.byteOffset, buff.byteLength)
+    : Buffer.from(buff);
 
-  // Rutas temporales
-  const tempInputPath = '/home/ortega/web-scrapper-splice/api/audios/input_audio.mp3';
-  const tempOutputPath = '/home/ortega/web-scrapper-splice/api/audios/output_audio.wav';
+  // Generar nombres únicos para archivos temporales
+  const uniqueId = randomBytes(8).toString('hex');
+  const tempInputPath = `/home/ortega/web-scrapper-splice/api/audios/input_${uniqueId}.mp3`;
+  const tempOutputPath = `/home/ortega/web-scrapper-splice/api/audios/output_${uniqueId}.wav`;
 
   try {
     // Guardar el archivo MP3 recibido
@@ -42,10 +46,21 @@ export async function convertAudio(buff: ArrayBuffer) {
         console.error(`ffmpeg stderr: ${data}`);
       });
 
-      ffmpeg.on('close', (code) => {
+      ffmpeg.on('close', async (code) => {
+        // Limpiar el archivo MP3 temporal
+        try {
+          await unlink(tempInputPath);
+        } catch (cleanupError) {
+          console.error('Error cleaning up temp input file:', cleanupError);
+        }
+
         if (code === 0) {
           resolve(tempOutputPath);
         } else {
+          // Si falla, limpiar también el output si existe
+          try {
+            await unlink(tempOutputPath);
+          } catch {}
           reject(new Error(`ffmpeg exited with code ${code}`));
         }
       });
