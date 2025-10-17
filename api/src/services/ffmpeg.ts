@@ -1,6 +1,9 @@
-import { spawn } from 'node:child_process';
 import { writeFile, stat, unlink, readFile } from 'node:fs/promises';
+import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
+import { resolve } from 'node:path';
+
+export const baseDirAudios = resolve(process.cwd(), 'audios');
 
 export async function convertAudio(buff: Uint8Array | ArrayBuffer) {
   // Convertir a Buffer
@@ -10,8 +13,8 @@ export async function convertAudio(buff: Uint8Array | ArrayBuffer) {
 
   // Generar nombres únicos para archivos temporales
   const uniqueId = randomBytes(8).toString('hex');
-  const tempInputPath = `/home/ortega/web-scrapper-splice/api/audios/input_${uniqueId}.mp3`;
-  const tempOutputPath = `/home/ortega/web-scrapper-splice/api/audios/output_${uniqueId}.wav`;
+  const tempInputPath = resolve(baseDirAudios, `input_${uniqueId}.mp3`);
+  const tempOutputPath = resolve(baseDirAudios, `output_${uniqueId}.wav`);
 
   try {
     // Guardar el archivo MP3 recibido
