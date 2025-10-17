@@ -24,13 +24,13 @@ const data = {
   },
   navMain: [
     {
-      title: "Splice Search Samples",
+      title: "Busqueda En Splice",
       url: "/",
       icon: SquareTerminal,
       isActive: true
     },
     {
-      title: "Downloader Splice Samples",
+      title: "Descarga Por Link",
       url: "/downloader",
       icon: Bot
     }
