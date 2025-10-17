@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { writeFile, stat, unlink } from 'node:fs/promises';
+import { writeFile, stat, unlink, readFile } from 'node:fs/promises';
 import { randomBytes } from 'node:crypto';
 
 export async function convertAudio(buff: Uint8Array | ArrayBuffer) {
@@ -25,7 +25,7 @@ export async function convertAudio(buff: Uint8Array | ArrayBuffer) {
     }
 
     // Procesar con FFmpeg para convertir a WAV y remover metadata/licencias
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<Buffer>((resolve, reject) => {
       const ffmpeg = spawn('ffmpeg', [
         '-y', // Sobrescribir archivos de salida
         '-i', tempInputPath,
@@ -55,7 +55,21 @@ export async function convertAudio(buff: Uint8Array | ArrayBuffer) {
         }
 
         if (code === 0) {
-          resolve(tempOutputPath);
+          try {
+            // Leer el archivo WAV generado
+            const wavBuffer = await readFile(tempOutputPath);
+            
+            // Limpiar el archivo WAV temporal
+            try {
+              await unlink(tempOutputPath);
+            } catch (cleanupError) {
+              console.error('Error cleaning up temp output file:', cleanupError);
+            }
+            
+            resolve(wavBuffer);
+          } catch (readError) {
+            reject(new Error(`Error reading output file: ${readError}`));
+          }
         } else {
           // Si falla, limpiar también el output si existe
           try {
