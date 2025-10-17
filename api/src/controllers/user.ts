@@ -1,9 +1,9 @@
 import { COOKIE_NAME, ENV, JWT_SECRECT, ROUNDS_SALT } from '../schemas/env.js'
+import { extractCookieValue } from '../utils/token.js';
 import { Request, Response } from "express";
 import { User } from "../models/user.m.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { extractCookieValue } from 'src/utils/token.js';
 
 export const registerNewUser = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -180,7 +180,7 @@ export const loginUser = async (req: Request, res: Response) => {
         role: user.role,
       }
 
-      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '24h' }, (err, token) => {
+      jwt.sign(userDTO, JWT_SECRECT, { expiresIn: '12h' }, (err, token) => {
         if (err) {
           console.log(err.message);
           res.status(401).json({ message: err.message })
