@@ -1,7 +1,6 @@
-import { UserPayLoad } from "../middlewares/authToken.js";
+import { registerPlay, registerDownload } from "../services/countService.js";
 import { decodeSpliceAudio } from "../utils/decode.js";
 import { convertAudio } from "../services/ffmpeg.js";
-import { Count } from "../models/count.m.js";
 import { Request, Response } from "express";
 
 export const searchSpliceGraphQL = async (req: Request, res: Response) => {
@@ -33,7 +32,6 @@ export const proxyS3 = async (req: Request, res: Response) => {
   }
 
   try {
-
     const response = await fetch(url, {
       headers: {
         "Origin": "https://splice.com",
@@ -50,37 +48,8 @@ export const proxyS3 = async (req: Request, res: Response) => {
       res.setHeader("Content-Type", contentType);
     }
 
-    // Registrar la descarga en la base de datos
-    if (req.user && typeof req.user === 'object') {
-      const userData = req.user as UserPayLoad
-
-      await Count.sync();
-      const nowDate = new Date();
-      const existReg = await Count.findOne({
-        where: {
-          username: userData.username,
-          dateSave: nowDate
-        }
-      })
-
-      if (existReg === null) {
-        await Count.create({
-          username: userData.username,
-          countPlay: 1
-        })
-      } else {
-        const updateCount = existReg.dataValues.countPlay + 1
-
-        await Count.update(
-          { countPlay: updateCount },
-          {
-            where: {
-              username: userData.username
-            }
-          }
-        )
-      }
-    }
+    // Registrar el play de forma asíncrona (no bloqueante)
+    registerPlay(req.user);
 
     const buffer = await response.arrayBuffer();
     res.send(Buffer.from(buffer));
@@ -96,6 +65,7 @@ export const processAudio = async (req: Request, res: Response) => {
   if (!url) {
     return res.status(400).json({ error: "Missing 'url' query parameter" });
   }
+
   try {
     const response = await fetch(url, {
       headers: {
@@ -115,37 +85,8 @@ export const processAudio = async (req: Request, res: Response) => {
     try {
       const wavBuffer = await convertAudio(decodedData);
 
-      // Registrar la descarga en la base de datos
-      if (req.user && typeof req.user === 'object') {
-        const userData = req.user as UserPayLoad
-
-        await Count.sync();
-        const nowDate = new Date();
-        const existReg = await Count.findOne({
-          where: {
-            username: userData.username,
-            dateSave: nowDate
-          }
-        })
-
-        if (existReg === null) {
-          await Count.create({
-            username: userData.username,
-            countDownload: 1
-          })
-        } else {
-          const updateCount = existReg.dataValues.countDownload + 1
-
-          await Count.update(
-            { countDownload: updateCount },
-            {
-              where: {
-                username: userData.username
-              }
-            }
-          )
-        }
-      }
+      // Registrar la descarga de forma asíncrona (no bloqueante)
+      registerDownload(req.user);
 
       res.setHeader('Content-Type', 'audio/wav');
       res.setHeader('Content-Disposition', 'attachment; filename="sample.wav"');
