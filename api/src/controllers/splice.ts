@@ -1,6 +1,7 @@
+import { registerPlay, registerDownload } from "../services/countService.js";
+import { decodeSpliceAudio } from "../utils/decode.js";
+import { convertAudio } from "../services/ffmpeg.js";
 import { Request, Response } from "express";
-import { convertAudio } from "../services/ffmpeg";
-import { decodeSpliceAudio } from "../utils/decode";
 
 export const searchSpliceGraphQL = async (req: Request, res: Response) => {
   try {
@@ -31,7 +32,6 @@ export const proxyS3 = async (req: Request, res: Response) => {
   }
 
   try {
-
     const response = await fetch(url, {
       headers: {
         "Origin": "https://splice.com",
@@ -48,7 +48,9 @@ export const proxyS3 = async (req: Request, res: Response) => {
       res.setHeader("Content-Type", contentType);
     }
 
-    // Enviar el buffer binario
+    // Registrar el play de forma asíncrona (no bloqueante)
+    registerPlay(req.user);
+
     const buffer = await response.arrayBuffer();
     res.send(Buffer.from(buffer));
   } catch (error) {
@@ -63,6 +65,7 @@ export const processAudio = async (req: Request, res: Response) => {
   if (!url) {
     return res.status(400).json({ error: "Missing 'url' query parameter" });
   }
+
   try {
     const response = await fetch(url, {
       headers: {
@@ -76,17 +79,15 @@ export const processAudio = async (req: Request, res: Response) => {
     }
 
     const buffer = await response.arrayBuffer();
-
     const encodedData = new Uint8Array(buffer);
-
     const decodedData = decodeSpliceAudio(encodedData);
-    
-    // Espera el resultado de convertAudio
+
     try {
-      // Pasar el Uint8Array directamente, no .buffer
       const wavBuffer = await convertAudio(decodedData);
-      
-      // Enviar el archivo WAV como buffer al cliente
+
+      // Registrar la descarga de forma asíncrona (no bloqueante)
+      registerDownload(req.user);
+
       res.setHeader('Content-Type', 'audio/wav');
       res.setHeader('Content-Disposition', 'attachment; filename="sample.wav"');
       res.send(wavBuffer);

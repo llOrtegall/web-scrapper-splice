@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 /**
  * Payload del token JWT con información del usuario
  */
-interface UserPayLoad extends jwt.JwtPayload {
+export interface UserPayLoad extends jwt.JwtPayload {
   id: string;
   username: string;
   role: string;

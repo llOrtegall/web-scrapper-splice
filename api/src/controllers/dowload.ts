@@ -1,4 +1,5 @@
 import { runCommand, baseDirAudios } from "../utils/funtions.js";
+import { registerProcess } from "../services/countService.js";
 import { Request, Response } from "express";
 import crypto from "node:crypto";
 import path from "node:path";
@@ -106,11 +107,14 @@ export const downloadFile = async (req: Request, res: Response) => {
       return;
     }
 
+    // Registrar el proceso de forma asíncrona (no bloqueante)
+    registerProcess(req.user);
+
     const filePath = path.join(folderPath, audioFile);
     res.download(filePath, audioFile);
   } catch (error) {
     console.error(`Error downloading file for ID ${id}:`, error);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Error retrieving audio file',
       details: error instanceof Error ? error.message : 'Unknown error'
     });
