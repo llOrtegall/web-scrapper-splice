@@ -1,6 +1,8 @@
-import { Request, Response } from "express";
-import { convertAudio } from "../services/ffmpeg.js";
+import { UserPayLoad } from "../middlewares/authToken.js";
 import { decodeSpliceAudio } from "../utils/decode.js";
+import { convertAudio } from "../services/ffmpeg.js";
+import { Count } from "../models/count.m.js";
+import { Request, Response } from "express";
 
 export const searchSpliceGraphQL = async (req: Request, res: Response) => {
   try {
@@ -48,7 +50,38 @@ export const proxyS3 = async (req: Request, res: Response) => {
       res.setHeader("Content-Type", contentType);
     }
 
-    // Enviar el buffer binario
+    // Registrar la descarga en la base de datos
+    if (req.user && typeof req.user === 'object') {
+      const userData = req.user as UserPayLoad
+
+      await Count.sync();
+      const nowDate = new Date();
+      const existReg = await Count.findOne({
+        where: {
+          username: userData.username,
+          dateSave: nowDate
+        }
+      })
+
+      if (existReg === null) {
+        await Count.create({
+          username: userData.username,
+          countPlay: 1
+        })
+      } else {
+        const updateCount = existReg.dataValues.countPlay + 1
+
+        await Count.update(
+          { countPlay: updateCount },
+          {
+            where: {
+              username: userData.username
+            }
+          }
+        )
+      }
+    }
+
     const buffer = await response.arrayBuffer();
     res.send(Buffer.from(buffer));
   } catch (error) {
@@ -76,17 +109,44 @@ export const processAudio = async (req: Request, res: Response) => {
     }
 
     const buffer = await response.arrayBuffer();
-
     const encodedData = new Uint8Array(buffer);
-
     const decodedData = decodeSpliceAudio(encodedData);
-    
-    // Espera el resultado de convertAudio
+
     try {
-      // Pasar el Uint8Array directamente, no .buffer
       const wavBuffer = await convertAudio(decodedData);
-      
-      // Enviar el archivo WAV como buffer al cliente
+
+      // Registrar la descarga en la base de datos
+      if (req.user && typeof req.user === 'object') {
+        const userData = req.user as UserPayLoad
+
+        await Count.sync();
+        const nowDate = new Date();
+        const existReg = await Count.findOne({
+          where: {
+            username: userData.username,
+            dateSave: nowDate
+          }
+        })
+
+        if (existReg === null) {
+          await Count.create({
+            username: userData.username,
+            countDownload: 1
+          })
+        } else {
+          const updateCount = existReg.dataValues.countDownload + 1
+
+          await Count.update(
+            { countDownload: updateCount },
+            {
+              where: {
+                username: userData.username
+              }
+            }
+          )
+        }
+      }
+
       res.setHeader('Content-Type', 'audio/wav');
       res.setHeader('Content-Disposition', 'attachment; filename="sample.wav"');
       res.send(wavBuffer);
