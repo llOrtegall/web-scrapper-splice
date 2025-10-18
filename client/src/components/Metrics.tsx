@@ -1,13 +1,21 @@
 import { useState } from "react";
 import { useAuth } from "@/context/auth/AuthContext";
 import { useDailyMetrics, useMonthlyMetrics, useUserMetrics } from "@/hooks/useMetrics";
+import { useUsers } from "@/hooks/useUsers";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from "@/components/ui/dropdown-menu";
 import { 
   Activity, 
   Download, 
@@ -18,7 +26,9 @@ import {
   BarChart3,
   RefreshCw,
   Users,
-  User
+  User,
+  ChevronDown,
+  X
 } from "lucide-react";
 
 type Period = "day" | "week" | "month";
@@ -27,7 +37,9 @@ export const MetricsComponent = () => {
   const { user } = useAuth();
   const [period, setPeriod] = useState<Period>("month");
   const [selectedUsername, setSelectedUsername] = useState<string>("");
-  const [usernameInput, setUsernameInput] = useState<string>("");
+
+  // Obtener lista de usuarios
+  const { users, loading: usersLoading } = useUsers();
 
   // Métricas globales (todos los usuarios)
   const { 
@@ -60,13 +72,12 @@ export const MetricsComponent = () => {
     }
   };
 
-  const handleSearchUser = () => {
-    setSelectedUsername(usernameInput.trim());
+  const handleSelectUser = (username: string) => {
+    setSelectedUsername(username);
   };
 
   const handleClearUser = () => {
     setSelectedUsername("");
-    setUsernameInput("");
   };
 
   // Verificar que el usuario sea admin
@@ -109,27 +120,57 @@ export const MetricsComponent = () => {
             Filtrar por Usuario
           </CardTitle>
           <CardDescription>
-            Busca métricas de un usuario específico
+            Selecciona un usuario para ver sus métricas individuales
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-3 items-end">
             <div className="flex-1">
-              <Label htmlFor="username">Nombre de usuario</Label>
-              <Input
-                id="username"
-                placeholder="Ingresa el username..."
-                value={usernameInput}
-                onChange={(e) => setUsernameInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearchUser()}
-              />
+              <Label htmlFor="user-select">Usuario</Label>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-between"
+                    disabled={usersLoading}
+                  >
+                    {selectedUsername || "Selecciona un usuario..."}
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-[400px] max-h-[300px] overflow-y-auto">
+                  <DropdownMenuLabel>Usuarios disponibles</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {usersLoading ? (
+                    <div className="p-2">
+                      <Skeleton className="h-8 w-full" />
+                    </div>
+                  ) : users.length === 0 ? (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                      No hay usuarios disponibles
+                    </div>
+                  ) : (
+                    users.map((usr) => (
+                      <DropdownMenuItem
+                        key={usr.id}
+                        onClick={() => handleSelectUser(usr.username)}
+                        className="cursor-pointer"
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span>{usr.username}</span>
+                          <Badge variant={usr.rol === "admin" ? "default" : "secondary"}>
+                            {usr.rol}
+                          </Badge>
+                        </div>
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
-            <Button onClick={handleSearchUser} disabled={!usernameInput.trim()}>
-              Buscar
-            </Button>
             {selectedUsername && (
-              <Button variant="outline" onClick={handleClearUser}>
-                Limpiar
+              <Button variant="outline" onClick={handleClearUser} size="icon">
+                <X className="h-4 w-4" />
               </Button>
             )}
           </div>
