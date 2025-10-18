@@ -46,14 +46,14 @@ interface UserRankingResult {
 }
 
 /**
- * Obtiene métricas generales de descargas, plays y procesos
+ * Obtiene métricas generales de descargas, plays y procesos de TODOS los usuarios
+ * Solo accesible para rootAdmin
  * Query params:
  * - period: 'day' | 'week' | 'month' (default: 'month')
- * - username: filtrar por usuario específico (opcional)
  */
 export const getMetrics = async (req: Request, res: Response) => {
   try {
-    const { period = 'month', username } = req.query;
+    const { period = 'month' } = req.query;
     const daysBack = period === 'day' ? 1 : period === 'week' ? 7 : 30;
     
     const startDate = new Date();
@@ -62,10 +62,6 @@ export const getMetrics = async (req: Request, res: Response) => {
     const whereClause: any = {
       dateSave: { [Op.gte]: startDate }
     };
-
-    if (username && typeof username === 'string') {
-      whereClause.username = username;
-    }
 
     // Obtener totales del período
     const totals = await Count.findOne({
@@ -133,22 +129,17 @@ export const getMetrics = async (req: Request, res: Response) => {
 };
 
 /**
- * Obtiene métricas detalladas por día
+ * Obtiene métricas detalladas por día de TODOS los usuarios
  * Últimos 30 días máximo
  */
 export const getDailyMetrics = async (req: Request, res: Response) => {
   try {
-    const { username } = req.query;
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 30);
 
     const whereClause: any = {
       dateSave: { [Op.gte]: startDate }
     };
-
-    if (username && typeof username === 'string') {
-      whereClause.username = username;
-    }
 
     const dailyMetrics = await Count.findAll({
       where: whereClause,
@@ -184,22 +175,17 @@ export const getDailyMetrics = async (req: Request, res: Response) => {
 };
 
 /**
- * Obtiene métricas agrupadas por semana
+ * Obtiene métricas agrupadas por semana de TODOS los usuarios
  * Últimos 30 días (aproximadamente 4 semanas)
  */
 export const getWeeklyMetrics = async (req: Request, res: Response) => {
   try {
-    const { username } = req.query;
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 30);
 
     const whereClause: any = {
       dateSave: { [Op.gte]: startDate }
     };
-
-    if (username && typeof username === 'string') {
-      whereClause.username = username;
-    }
 
     // Agrupar por semana usando EXTRACT(WEEK FROM dateSave)
     const weeklyMetrics = await Count.findAll({
@@ -236,22 +222,17 @@ export const getWeeklyMetrics = async (req: Request, res: Response) => {
 };
 
 /**
- * Obtiene métricas agrupadas por mes
+ * Obtiene métricas agrupadas por mes de TODOS los usuarios
  * Último mes
  */
 export const getMonthlyMetrics = async (req: Request, res: Response) => {
   try {
-    const { username } = req.query;
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 30);
 
     const whereClause: any = {
       dateSave: { [Op.gte]: startDate }
     };
-
-    if (username && typeof username === 'string') {
-      whereClause.username = username;
-    }
 
     const monthlyMetrics = await Count.findAll({
       where: whereClause,
