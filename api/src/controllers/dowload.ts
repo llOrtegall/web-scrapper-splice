@@ -1,6 +1,5 @@
 import { runCommand, baseDirAudios } from "../utils/funtions.js";
-import { UserPayLoad } from "../middlewares/authToken.js";
-import { Count } from "../models/count.m.js";
+import { registerProcess } from "../services/countService.js";
 import { Request, Response } from "express";
 import crypto from "node:crypto";
 import path from "node:path";
@@ -108,37 +107,8 @@ export const downloadFile = async (req: Request, res: Response) => {
       return;
     }
 
-    // Registrar la descarga en la base de datos
-    if (req.user && typeof req.user === 'object') {
-      const userData = req.user as UserPayLoad
-
-      await Count.sync();
-      const nowDate = new Date();
-      const existReg = await Count.findOne({
-        where: {
-          username: userData.username,
-          dateSave: nowDate
-        }
-      })
-
-      if (existReg === null) {
-        await Count.create({
-          username: userData.username,
-          countProcess: 1
-        })
-      } else {
-        const updateCount = existReg.dataValues.countProcess + 1
-
-        await Count.update(
-          { countProcess: updateCount },
-          {
-            where: {
-              username: userData.username
-            }
-          }
-        )
-      }
-    }
+    // Registrar el proceso de forma asíncrona (no bloqueante)
+    registerProcess(req.user);
 
     const filePath = path.join(folderPath, audioFile);
     res.download(filePath, audioFile);
