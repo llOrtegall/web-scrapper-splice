@@ -1,5 +1,6 @@
 import { cleanAudiosFolder } from './utils/funtions.js';
 import { connPostgreSQL } from './database/connPg.js';
+import { metricsRouter } from './routes/metrics.js';
 import { dowloadRouter} from './routes/dowload.js';
 import { routerSplice } from './routes/splice.js';
 import { routerUsers } from './routes/user.r.js';
@@ -27,6 +28,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/v1', dowloadRouter);
 app.use('/api/v1', routerUsers);
 app.use('/api/v1', routerSplice);
+app.use('/api/v1', metricsRouter);
 
 cleanAudiosFolder().then(() => {
   app.listen(PORT, () => {
