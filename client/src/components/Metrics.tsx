@@ -1,84 +1,84 @@
 import { useState } from "react";
 import { useAuth } from "@/context/auth/AuthContext";
 import { useDailyMetrics, useMonthlyMetrics, useUserMetrics } from "@/hooks/useMetrics";
-import { useUsers } from "@/hooks/useUsers";
+// import { useUsers } from "@/hooks/useUsers";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
+// import { Label } from "@/components/ui/label";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+//   DropdownMenuSeparator,
+//   DropdownMenuLabel,
+// } from "@/components/ui/dropdown-menu";
 import { 
   Activity, 
   Download, 
   PlayCircle, 
-  TrendingUp, 
-  Calendar,
-  Award,
+  // TrendingUp, 
+  // Calendar,
+  // Award,
   BarChart3,
-  RefreshCw,
+  // RefreshCw,
   Users,
-  User,
-  ChevronDown,
-  X
+  // User,
+  // ChevronDown,
+  // X
 } from "lucide-react";
 
 type Period = "day" | "week" | "month";
 
 export const MetricsComponent = () => {
   const { user } = useAuth();
-  const [period, setPeriod] = useState<Period>("month");
-  const [selectedUsername, setSelectedUsername] = useState<string>("");
+  const [period, _setPeriod] = useState<Period>("month");
+  const [selectedUsername, _setSelectedUsername] = useState<string>("");
 
   // Obtener lista de usuarios
   // const { users, loading: usersLoading } = useUsers();
 
   // Métricas globales (todos los usuarios)
   const { 
-    data: dailyData, 
-    loading: dailyLoading, 
-    error: dailyError,
-    refetch: refetchDaily 
+    // data: dailyData, 
+    // loading: dailyLoading, 
+    // error: dailyError,
+    // refetch: refetchDaily 
   } = useDailyMetrics();
 
   const { 
     data: monthlyData, 
     loading: monthlyLoading, 
     error: monthlyError,
-    refetch: refetchMonthly 
+    // refetch: refetchMonthly 
   } = useMonthlyMetrics();
 
   // Métricas de usuario específico (cuando se selecciona uno)
   const { 
-    data: userData, 
-    loading: userLoading, 
-    error: userError,
-    refetch: refetchUser 
+    // data: userData, 
+    // loading: userLoading, 
+    // error: userError,
+    // refetch: refetchUser 
   } = useUserMetrics(selectedUsername, period);
 
-  const handleRefresh = () => {
-    refetchDaily();
-    refetchMonthly();
-    if (selectedUsername) {
-      refetchUser();
-    }
-  };
+//   const handleRefresh = () => {
+//     refetchDaily();
+//     refetchMonthly();
+//     if (selectedUsername) {
+//       refetchUser();
+//     }
+//   };
 
-  const handleSelectUser = (username: string) => {
-    setSelectedUsername(username);
-  };
+//   const handleSelectUser = (username: string) => {
+//     setSelectedUsername(username);
+//   };
 
-  const handleClearUser = () => {
-    setSelectedUsername("");
-  };
+//   const handleClearUser = () => {
+//     setSelectedUsername("");
+//   };
 
   // Verificar que el usuario sea admin
   if (!user || user.rol !== "admin") {
@@ -289,230 +289,230 @@ export const MetricsComponent = () => {
 };
 
 // Componente de cards con métricas del usuario
-interface UserMetricsCardsProps {
-  data: any;
-  loading: boolean;
-  error: string | null;
-}
+// interface UserMetricsCardsProps {
+//   data: any;
+//   loading: boolean;
+//   error: string | null;
+// }
 
-const UserMetricsCards = ({ data, loading, error }: UserMetricsCardsProps) => {
-  if (loading) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i}>
-            <CardHeader className="space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-8 w-16" />
-            </CardHeader>
-          </Card>
-        ))}
-      </div>
-    );
-  }
+// const UserMetricsCards = ({ data, loading, error }: UserMetricsCardsProps) => {
+//   if (loading) {
+//     return (
+//       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+//         {[...Array(4)].map((_, i) => (
+//           <Card key={i}>
+//             <CardHeader className="space-y-2">
+//               <Skeleton className="h-4 w-24" />
+//               <Skeleton className="h-8 w-16" />
+//             </CardHeader>
+//           </Card>
+//         ))}
+//       </div>
+//     );
+//   }
 
-  if (error || !data) {
-    return <ErrorMessage message={error || "No hay datos disponibles"} />;
-  }
+//   if (error || !data) {
+//     return <ErrorMessage message={error || "No hay datos disponibles"} />;
+//   }
 
-  const cards = [
-    {
-      title: "Total Descargas",
-      value: data.totals.downloads,
-      icon: Download,
-      description: `${data.averages.downloadsPerDay.toFixed(1)} por día`,
-      color: "text-blue-500"
-    },
-    {
-      title: "Total Reproducciones",
-      value: data.totals.plays,
-      icon: PlayCircle,
-      description: `${data.averages.playsPerDay.toFixed(1)} por día`,
-      color: "text-green-500"
-    },
-    {
-      title: "Total Procesos",
-      value: data.totals.processes,
-      icon: Activity,
-      description: `${data.averages.processesPerDay.toFixed(1)} por día`,
-      color: "text-purple-500"
-    },
-    {
-      title: "Ranking",
-      value: `#${data.ranking.position}`,
-      icon: Award,
-      description: `De ${data.ranking.totalUsers} usuarios`,
-      color: "text-yellow-500"
-    }
-  ];
+//   const cards = [
+//     {
+//       title: "Total Descargas",
+//       value: data.totals.downloads,
+//       icon: Download,
+//       description: `${data.averages.downloadsPerDay.toFixed(1)} por día`,
+//       color: "text-blue-500"
+//     },
+//     {
+//       title: "Total Reproducciones",
+//       value: data.totals.plays,
+//       icon: PlayCircle,
+//       description: `${data.averages.playsPerDay.toFixed(1)} por día`,
+//       color: "text-green-500"
+//     },
+//     {
+//       title: "Total Procesos",
+//       value: data.totals.processes,
+//       icon: Activity,
+//       description: `${data.averages.processesPerDay.toFixed(1)} por día`,
+//       color: "text-purple-500"
+//     },
+//     {
+//       title: "Ranking",
+//       value: `#${data.ranking.position}`,
+//       icon: Award,
+//       description: `De ${data.ranking.totalUsers} usuarios`,
+//       color: "text-yellow-500"
+//     }
+//   ];
 
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {cards.map((card) => (
-        <Card key={card.title}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {card.title}
-            </CardTitle>
-            <card.icon className={`h-4 w-4 ${card.color}`} />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{card.value}</div>
-            <p className="text-xs text-muted-foreground">
-              {card.description}
-            </p>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-};
+//   return (
+//     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+//       {cards.map((card) => (
+//         <Card key={card.title}>
+//           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+//             <CardTitle className="text-sm font-medium">
+//               {card.title}
+//             </CardTitle>
+//             <card.icon className={`h-4 w-4 ${card.color}`} />
+//           </CardHeader>
+//           <CardContent>
+//             <div className="text-2xl font-bold">{card.value}</div>
+//             <p className="text-xs text-muted-foreground">
+//               {card.description}
+//             </p>
+//           </CardContent>
+//         </Card>
+//       ))}
+//     </div>
+//   );
+// };
 
 // Tabla de actividad del usuario
-interface UserActivityTableProps {
-  data: any[];
-  loading: boolean;
-}
+// interface UserActivityTableProps {
+//   data: any[];
+//   loading: boolean;
+// }
 
-const UserActivityTable = ({ data, loading }: UserActivityTableProps) => {
-  if (loading) {
-    return <MetricsTableSkeleton />;
-  }
+// const UserActivityTable = ({ data, loading }: UserActivityTableProps) => {
+//   if (loading) {
+//     return <MetricsTableSkeleton />;
+//   }
 
-  if (data.length === 0) {
-    return null;
-  }
+//   if (data.length === 0) {
+//     return null;
+//   }
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" />
-          Actividad Detallada
-        </CardTitle>
-        <CardDescription>
-          Desglose de tu actividad día a día
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-muted/50">
-                <th className="p-4 text-left font-medium">Fecha</th>
-                <th className="p-4 text-right font-medium">Reproducciones</th>
-                <th className="p-4 text-right font-medium">Descargas</th>
-                <th className="p-4 text-right font-medium">Procesos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.slice(0, 10).map((day, index) => (
-                <tr key={index} className="border-b last:border-0 hover:bg-muted/50">
-                  <td className="p-4">
-                    {new Date(day.dateSave).toLocaleDateString('es-ES', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric'
-                    })}
-                  </td>
-                  <td className="p-4 text-right">
-                    <Badge variant="secondary">{day.countPlay}</Badge>
-                  </td>
-                  <td className="p-4 text-right">
-                    <Badge variant="secondary">{day.countDownload}</Badge>
-                  </td>
-                  <td className="p-4 text-right">
-                    <Badge variant="secondary">{day.countProcess}</Badge>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+//   return (
+//     <Card>
+//       <CardHeader>
+//         <CardTitle className="flex items-center gap-2">
+//           <TrendingUp className="h-5 w-5" />
+//           Actividad Detallada
+//         </CardTitle>
+//         <CardDescription>
+//           Desglose de tu actividad día a día
+//         </CardDescription>
+//       </CardHeader>
+//       <CardContent>
+//         <div className="rounded-md border">
+//           <table className="w-full">
+//             <thead>
+//               <tr className="border-b bg-muted/50">
+//                 <th className="p-4 text-left font-medium">Fecha</th>
+//                 <th className="p-4 text-right font-medium">Reproducciones</th>
+//                 <th className="p-4 text-right font-medium">Descargas</th>
+//                 <th className="p-4 text-right font-medium">Procesos</th>
+//               </tr>
+//             </thead>
+//             <tbody>
+//               {data.slice(0, 10).map((day, index) => (
+//                 <tr key={index} className="border-b last:border-0 hover:bg-muted/50">
+//                   <td className="p-4">
+//                     {new Date(day.dateSave).toLocaleDateString('es-ES', {
+//                       day: '2-digit',
+//                       month: 'short',
+//                       year: 'numeric'
+//                     })}
+//                   </td>
+//                   <td className="p-4 text-right">
+//                     <Badge variant="secondary">{day.countPlay}</Badge>
+//                   </td>
+//                   <td className="p-4 text-right">
+//                     <Badge variant="secondary">{day.countDownload}</Badge>
+//                   </td>
+//                   <td className="p-4 text-right">
+//                     <Badge variant="secondary">{day.countProcess}</Badge>
+//                   </td>
+//                 </tr>
+//               ))}
+//             </tbody>
+//           </table>
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// };
 
-// Tabla de métricas diarias
-const DailyMetricsTable = ({ data }: { data: any[] }) => {
-  return (
-    <div className="rounded-md border">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b bg-muted/50">
-            <th className="p-4 text-left font-medium">Fecha</th>
-            <th className="p-4 text-right font-medium">
-              <div className="flex items-center justify-end gap-1">
-                <PlayCircle className="h-4 w-4" />
-                Plays
-              </div>
-            </th>
-            <th className="p-4 text-right font-medium">
-              <div className="flex items-center justify-end gap-1">
-                <Download className="h-4 w-4" />
-                Descargas
-              </div>
-            </th>
-            <th className="p-4 text-right font-medium">
-              <div className="flex items-center justify-end gap-1">
-                <Activity className="h-4 w-4" />
-                Procesos
-              </div>
-            </th>
-            <th className="p-4 text-right font-medium">Usuarios</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((day, index) => (
-            <tr key={index} className="border-b last:border-0 hover:bg-muted/50">
-              <td className="p-4 font-medium">
-                {new Date(day.date).toLocaleDateString('es-ES', {
-                  weekday: 'short',
-                  day: '2-digit',
-                  month: 'short'
-                })}
-              </td>
-              <td className="p-4 text-right">
-                <Badge variant="outline" className="text-green-600">
-                  {day.plays}
-                </Badge>
-              </td>
-              <td className="p-4 text-right">
-                <Badge variant="outline" className="text-blue-600">
-                  {day.downloads}
-                </Badge>
-              </td>
-              <td className="p-4 text-right">
-                <Badge variant="outline" className="text-purple-600">
-                  {day.processes}
-                </Badge>
-              </td>
-              <td className="p-4 text-right">
-                <Badge variant="secondary">{day.activeUsers}</Badge>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr className="border-t bg-muted/50 font-medium">
-            <td className="p-4">Total</td>
-            <td className="p-4 text-right">
-              {data.reduce((sum, d) => sum + d.plays, 0)}
-            </td>
-            <td className="p-4 text-right">
-              {data.reduce((sum, d) => sum + d.downloads, 0)}
-            </td>
-            <td className="p-4 text-right">
-              {data.reduce((sum, d) => sum + d.processes, 0)}
-            </td>
-            <td className="p-4 text-right">-</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-  );
-};
+// // Tabla de métricas diarias
+// const DailyMetricsTable = ({ data }: { data: any[] }) => {
+//   return (
+//     <div className="rounded-md border">
+//       <table className="w-full">
+//         <thead>
+//           <tr className="border-b bg-muted/50">
+//             <th className="p-4 text-left font-medium">Fecha</th>
+//             <th className="p-4 text-right font-medium">
+//               <div className="flex items-center justify-end gap-1">
+//                 <PlayCircle className="h-4 w-4" />
+//                 Plays
+//               </div>
+//             </th>
+//             <th className="p-4 text-right font-medium">
+//               <div className="flex items-center justify-end gap-1">
+//                 <Download className="h-4 w-4" />
+//                 Descargas
+//               </div>
+//             </th>
+//             <th className="p-4 text-right font-medium">
+//               <div className="flex items-center justify-end gap-1">
+//                 <Activity className="h-4 w-4" />
+//                 Procesos
+//               </div>
+//             </th>
+//             <th className="p-4 text-right font-medium">Usuarios</th>
+//           </tr>
+//         </thead>
+//         <tbody>
+//           {data.map((day, index) => (
+//             <tr key={index} className="border-b last:border-0 hover:bg-muted/50">
+//               <td className="p-4 font-medium">
+//                 {new Date(day.date).toLocaleDateString('es-ES', {
+//                   weekday: 'short',
+//                   day: '2-digit',
+//                   month: 'short'
+//                 })}
+//               </td>
+//               <td className="p-4 text-right">
+//                 <Badge variant="outline" className="text-green-600">
+//                   {day.plays}
+//                 </Badge>
+//               </td>
+//               <td className="p-4 text-right">
+//                 <Badge variant="outline" className="text-blue-600">
+//                   {day.downloads}
+//                 </Badge>
+//               </td>
+//               <td className="p-4 text-right">
+//                 <Badge variant="outline" className="text-purple-600">
+//                   {day.processes}
+//                 </Badge>
+//               </td>
+//               <td className="p-4 text-right">
+//                 <Badge variant="secondary">{day.activeUsers}</Badge>
+//               </td>
+//             </tr>
+//           ))}
+//         </tbody>
+//         <tfoot>
+//           <tr className="border-t bg-muted/50 font-medium">
+//             <td className="p-4">Total</td>
+//             <td className="p-4 text-right">
+//               {data.reduce((sum, d) => sum + d.plays, 0)}
+//             </td>
+//             <td className="p-4 text-right">
+//               {data.reduce((sum, d) => sum + d.downloads, 0)}
+//             </td>
+//             <td className="p-4 text-right">
+//               {data.reduce((sum, d) => sum + d.processes, 0)}
+//             </td>
+//             <td className="p-4 text-right">-</td>
+//           </tr>
+//         </tfoot>
+//       </table>
+//     </div>
+//   );
+// };
 
 // Tabla de métricas mensuales
 const MonthlyMetricsTable = ({ data }: { data: any[] }) => {
