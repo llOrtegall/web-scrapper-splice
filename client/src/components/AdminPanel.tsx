@@ -7,6 +7,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import axios from 'axios';
+import { MetricsComponent } from './Metrics';
 
 interface User {
   id: number;
@@ -342,6 +343,8 @@ export default function AdminPanel() {
           </Card>
         </div>
       </div>
+
+      <MetricsComponent />
     </div>
   );
 }
