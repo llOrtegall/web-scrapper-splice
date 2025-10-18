@@ -1,5 +1,5 @@
-import { Count } from "../models/count.m.js";
 import { UserPayLoad } from "../middlewares/authToken.js";
+import { Count } from "../models/count.m.js";
 
 type CountType = 'countPlay' | 'countDownload' | 'countProcess';
 
@@ -12,6 +12,7 @@ type CountType = 'countPlay' | 'countDownload' | 'countProcess';
  */
 async function incrementUserCount(username: string, countType: CountType): Promise<void> {
   try {
+    await Count.sync();
     const nowDate = new Date();
     
     // Usar findOrCreate para reducir de 2 queries a 1
