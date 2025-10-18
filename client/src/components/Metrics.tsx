@@ -39,7 +39,7 @@ export const MetricsComponent = () => {
   const [selectedUsername, setSelectedUsername] = useState<string>("");
 
   // Obtener lista de usuarios
-  const { users, loading: usersLoading } = useUsers();
+  // const { users, loading: usersLoading } = useUsers();
 
   // Métricas globales (todos los usuarios)
   const { 
@@ -95,9 +95,9 @@ export const MetricsComponent = () => {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <BarChart3 className="h-8 w-8" />
@@ -110,10 +110,10 @@ export const MetricsComponent = () => {
         <Button variant="outline" size="icon" onClick={handleRefresh}>
           <RefreshCw className="h-4 w-4" />
         </Button>
-      </div>
+      </div> */}
 
       {/* Búsqueda de Usuario Específico */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
             <User className="h-5 w-5" />
@@ -183,10 +183,10 @@ export const MetricsComponent = () => {
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Selector de Período para usuario específico */}
-      {selectedUsername && (
+      {/* {selectedUsername && (
         <div className="flex gap-2 items-center">
           <Label className="text-sm text-muted-foreground">Período:</Label>
           <Button
@@ -211,10 +211,10 @@ export const MetricsComponent = () => {
             Mes
           </Button>
         </div>
-      )}
+      )} */}
 
       {/* Métricas del Usuario Específico */}
-      {selectedUsername && (
+      {/* {selectedUsername && (
         <>
           <UserMetricsCards 
             data={userData} 
@@ -227,10 +227,10 @@ export const MetricsComponent = () => {
             loading={userLoading}
           />
         </>
-      )}
+      )} */}
 
       {/* Métricas Globales - Diarias */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calendar className="h-5 w-5" />
@@ -255,7 +255,7 @@ export const MetricsComponent = () => {
             <DailyMetricsTable data={dailyData} />
           )}
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Métricas Globales - Mensuales */}
       <Card>
@@ -284,7 +284,7 @@ export const MetricsComponent = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 };
 
