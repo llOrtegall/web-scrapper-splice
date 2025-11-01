@@ -6,6 +6,7 @@ import LoginPage from '@/pages/Login';
 import Root from './Root';
 
 import SearchSpliceSample from '@/pages/SearchSplice';
+import { MetricsComponent } from '@/components/Metrics';
 
 export const BrowserRouter = createBrowserRouter([
   {
@@ -25,6 +26,14 @@ export const BrowserRouter = createBrowserRouter([
         element: (
           <AdminRoute>
             <AdminPanel />
+          </AdminRoute>
+        )
+      },
+      {
+        path: '/metrics',
+        element: (
+          <AdminRoute>
+            <MetricsComponent />
           </AdminRoute>
         )
       }
