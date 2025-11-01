@@ -1,7 +1,7 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { ChevronsUpDown, LogOut, Settings } from "lucide-react"
+import { ChartLine, ChevronsUpDown, LogOut, Settings } from "lucide-react"
 import { useAuth } from "@/context/auth/AuthContext"
 import { Link } from "react-router"
 
@@ -41,15 +41,26 @@ export function NavUser() {
           >
             {
               user?.rol === "admin" && (
-                <Link to="/admin-panel">
-                  <button 
-                    className="flex py-2 px-4 items-center gap-2 opacity-80 cursor-pointer hover:opacity-100 hover:bg-accent hover:text-accent-foreground w-full rounded-t-lg"
-                  >
-                    <Settings />
-                    <span className="font-bold">Admin Panel</span>
-                  </button>
-                  <DropdownMenuSeparator />
-                </Link>
+                <>
+                  <Link to="/admin-panel">
+                    <button
+                      className="flex py-2 px-4 items-center gap-2 opacity-80 cursor-pointer hover:opacity-100 hover:bg-accent hover:text-accent-foreground w-full rounded-t-lg"
+                    >
+                      <Settings />
+                      <span className="font-bold">Admin Panel</span>
+                    </button>
+                    <DropdownMenuSeparator />
+                  </Link>
+                  <Link to="/metrics">
+                    <button
+                      className="flex py-2 px-4 items-center gap-2 opacity-80 cursor-pointer hover:opacity-100 hover:bg-accent hover:text-accent-foreground w-full rounded-t-lg"
+                    >
+                      <ChartLine />
+                      <span className="font-bold">Métricas</span>
+                    </button>
+                    <DropdownMenuSeparator />
+                  </Link>
+                </>
               )
             }
             <DropdownMenuItem onClick={logout} className="cursor-pointer hover:opacity-100 hover:bg-accent hover:text-accent-foreground w-full rounded-t-lg">
