@@ -6,7 +6,7 @@ import LoginPage from '@/pages/Login';
 import Root from './Root';
 
 import SearchSpliceSample from '@/pages/SearchSplice';
-import { MetricsComponent } from '@/components/Metrics';
+import { MetricsComponent } from '@/pages/Metrics';
 
 export const BrowserRouter = createBrowserRouter([
   {
