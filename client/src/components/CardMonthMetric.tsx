@@ -1,6 +1,7 @@
 import { Activity, Calendar, DotIcon, Download, PlayCircle } from "lucide-react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { DetailsByUsers } from "./DetailsByUsers";
 
 interface CountInt {
   totalPlays: number;
@@ -19,7 +20,7 @@ interface Props {
 export function CardMontMetric({ dateFinal, dateStart, loading, counts }: Props) {
 
   return (
-    <Card className="px-4 mx-4">
+    <Card className="px-4 mx-4 relative">
       <CardHeader>
         <article className="flex items-center gap-3 flex-wrap">
           <CardTitle className="flex items-center gap-2">
@@ -33,6 +34,10 @@ export function CardMontMetric({ dateFinal, dateStart, loading, counts }: Props)
         <p className="text-gray-400">
           {loading ? '—' : `${counts.uniqueUsers} Usuarios activos`}
         </p>
+
+        <figure className="absolute right-2 top-2">
+          <DetailsByUsers />
+        </figure>
       </CardHeader>
 
       <Separator />
