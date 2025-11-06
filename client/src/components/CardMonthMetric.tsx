@@ -36,7 +36,7 @@ export function CardMontMetric({ dateFinal, dateStart, loading, counts }: Props)
         </p>
 
         <figure className="absolute right-2 top-2">
-          <DetailsByUsers />
+          <DetailsByUsers initialDate={dateStart} finalDate={dateFinal}/>
         </figure>
       </CardHeader>
 
