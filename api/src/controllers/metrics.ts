@@ -80,6 +80,8 @@ export const getUsersMonthMetrics = async (req: Request, res: Response) => {
         attributes: [
           'username',
           [fn('SUM', col('countPlay')), 'totalPlays'],
+          [fn('SUM', col('countDownload')), 'totalDownloads'],
+          [fn('SUM', col('countProcess')), 'totalProcess']
         ],
         where: {
           dateSave: {
