@@ -2,12 +2,12 @@ import { Trash2, UserCheck, UserX, Users, Activity, Database, Plus, X } from 'lu
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { useState, useEffect, useCallback } from 'react';
 import { Avatar, AvatarFallback } from './ui/avatar';
+import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import axios from 'axios';
-import { MetricsComponent } from './Metrics';
 
 interface User {
   id: number;
@@ -201,7 +201,7 @@ export default function AdminPanel() {
                     <p>No hay usuarios registrados</p>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <ScrollArea className='h-[70vh] w-full px-4 py-2'>
                     {users.map((user, index) => (
                       <div key={user.id}>
                         <div className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
@@ -265,7 +265,7 @@ export default function AdminPanel() {
                         {index < users.length - 1 && <Separator className="my-2" />}
                       </div>
                     ))}
-                  </div>
+                  </ScrollArea>
                 )}
               </div>
             </CardContent>
@@ -343,8 +343,6 @@ export default function AdminPanel() {
           </Card>
         </div>
       </div>
-
-      <MetricsComponent />
     </div>
   );
 }
